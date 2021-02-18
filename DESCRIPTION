@@ -1,0 +1,24 @@
+Package: WadingPool
+Title: A toolkit for shallow/low-pass whole genome sequencing analysis
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Rene",
+           family = "Quevedo",
+           role = c("aut", "cre"),
+           email = "rquevedo@uhnresearch.ca",
+           comment = c(ORCID = "0000-0001-8288-1929"))
+Description: Takes aligned shallow whole-genome sequencing data and does basic metrics on it
+  such as QC, genotype-identification, copy-number calling, and telomere estimations.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.0
+Depends:
+    R (>= 2.10.0)
+Imports: 
+    GenomicRanges,
+    IRanges,
+    S4Vectors,
+    GenomeInfoDb,
+    VariantAnnotation,
+    stats
