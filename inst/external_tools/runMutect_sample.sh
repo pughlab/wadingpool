@@ -10,7 +10,6 @@ PDIR='/mnt/work1/users/pughlab/projects/NET-SEQ/shallow_wgs/variant_calling/mute
 module load igenome-human/hg19
 module load  mutect/1.1.5
 module load gatk/3.5
-module unload java/6
 module load java/7
 
 java -Xmx13g -jar $mutect_dir/muTect.jar \
