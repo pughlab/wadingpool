@@ -4,6 +4,7 @@
 file=$1
 fout=${file/.vcf/_test.txt}
 format_col=8
+sample_col=10
 
 echo "Reading VCF from [${file}]..."
 
@@ -21,7 +22,7 @@ perl -ne 'use List::Util qw/sum/;
           chomp $_;
           ## Isolate the samples 'AD' column from 'GT:AD:BQ:DP:FA' data
           my @spl=split(/\t/, $_);
-          my @ad_val = split(/:/, $spl[10]);
+          my @ad_val = split(/:/, $spl['${sample_col}']);
           my @ads = split(/,/, @ad_val['${AD_IDX}']);
           
           ## Categorize the depth per SNP
