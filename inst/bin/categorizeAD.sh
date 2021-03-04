@@ -6,21 +6,24 @@ print_usage() {
   printf "Usage: ..."
 }
 
-while getopts 'f:s:o:v:h' flag; do
+while getopts 'f:s:o:v:hV' flag; do
   case "${flag}" in
     f) format_col=${OPTARG} ;;
     s) sample_col=${OPTARG} ;;
     v) vcf="${OPTARG}" ;;
     o) out="${OPTARG}" ;;
+    V) verbose=true ;;
     h) print_usage
        exit 1 ;;
   esac
 done
 
-printf "Argument vcf is %s\n" "$vcf"
-printf "Argument out is %s\n" "$out"
-printf "Argument format_col is %d\n" "$format_col"
-printf "Argument sample_col is %d\n" "$sample_col"
+if($verbose); then
+  printf "Argument vcf: %s\n" "$vcf"
+  printf "Argument out: %s\n" "$out"
+  printf "Argument format_col: %d\n" "$format_col"
+  printf "Argument sample_col: %d\n" "$sample_col"
+fi
 
 
 # PDIR='/mnt/work1/users/pughlab/projects/NET-SEQ/shallow_wgs/variant_calling/mutect_common/output'
@@ -31,8 +34,6 @@ printf "Argument sample_col is %d\n" "$sample_col"
 # format_col=8
 # sample_col=10
 
-echo "Reading VCF from [${vcf}]..."
-
 ## From the 'GT:AD:BQ:DP:FA' format, identify the index of 'AD'
 AD_IDX=$(grep -v "^#" ${vcf} | head -1 | \
          perl -ne 'my @spl=split(/\t/, $_);
@@ -42,7 +43,8 @@ AD_IDX=$(grep -v "^#" ${vcf} | head -1 | \
 
 ## Isolate the AD data and categorize into No coverage (0), Ref.Homozygous (1),
 # Heterozygous (2), or Alt.Homozygous (3) classifications
-time grep -v "^#" ${vcf} | \
+start_time=`date +%s`
+grep -v "^#" ${vcf} | \
 perl -ne 'use List::Util qw/sum/;
           chomp $_;
           ## Isolate the samples 'AD' column from 'GT:AD:BQ:DP:FA' data
@@ -65,5 +67,6 @@ perl -ne 'use List::Util qw/sum/;
             }
           }' > \
 ${out}
+end_time=`date +%s`
 
-echo "... Outputted VCF classifications to [${out}]"
+printf "Runtime: %d\n" `expr $end_time - $start_time`
