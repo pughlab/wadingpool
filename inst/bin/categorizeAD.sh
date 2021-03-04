@@ -1,15 +1,40 @@
 #!/bin/bash
-
-#file='x.vcf'
-file=$1
-fout=${file/.vcf/_test.txt}
 format_col=8
 sample_col=10
 
-echo "Reading VCF from [${file}]..."
+print_usage() {
+  printf "Usage: ..."
+}
+
+while getopts 'f:s:o:v:h' flag; do
+  case "${flag}" in
+    f) format_col=${OPTARG} ;;
+    s) sample_col=${OPTARG} ;;
+    v) vcf="${OPTARG}" ;;
+    o) out="${OPTARG}" ;;
+    h) print_usage
+       exit 1 ;;
+  esac
+done
+
+printf "Argument vcf is %s\n" "$vcf"
+printf "Argument out is %s\n" "$out"
+printf "Argument format_col is %d\n" "$format_col"
+printf "Argument sample_col is %d\n" "$sample_col"
+
+
+# PDIR='/mnt/work1/users/pughlab/projects/NET-SEQ/shallow_wgs/variant_calling/mutect_common/output'
+# cp ${PDIR}/chr1.NET-2-001a_02_MT_DNA.processed.vcf ${PDIR}/x.vcf
+#vcf='/mnt/work1/users/pughlab/projects/NET-SEQ/shallow_wgs/variant_calling/mutect_common/output/x.vcf'
+# file=$1
+# fout=${vcf/.vcf/_test.txt}
+# format_col=8
+# sample_col=10
+
+echo "Reading VCF from [${vcf}]..."
 
 ## From the 'GT:AD:BQ:DP:FA' format, identify the index of 'AD'
-AD_IDX=$(grep -v "^#" ${file} | head -1 | \
+AD_IDX=$(grep -v "^#" ${vcf} | head -1 | \
          perl -ne 'my @spl=split(/\t/, $_);
                    my @format_legend = split(/:/, $spl['${format_col}']);
                    my @ad_idx = grep{$format_legend[$_] =~ /^AD$/} 0..$#format_legend;
@@ -17,7 +42,7 @@ AD_IDX=$(grep -v "^#" ${file} | head -1 | \
 
 ## Isolate the AD data and categorize into No coverage (0), Ref.Homozygous (1),
 # Heterozygous (2), or Alt.Homozygous (3) classifications
-grep -v "^#" ${file} | \
+time grep -v "^#" ${vcf} | \
 perl -ne 'use List::Util qw/sum/;
           chomp $_;
           ## Isolate the samples 'AD' column from 'GT:AD:BQ:DP:FA' data
@@ -39,6 +64,6 @@ perl -ne 'use List::Util qw/sum/;
               print "2\n"; ## HETEROZYGOUS
             }
           }' > \
-${fout}
+${out}
 
-echo "... Outputted VCF classifications to [${fout}]"
+echo "... Outputted VCF classifications to [${out}]"
