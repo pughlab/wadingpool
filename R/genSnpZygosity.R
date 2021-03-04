@@ -9,8 +9,9 @@
 #' @param chrs Chrs for the filename [chr].[sampleid].vcf
 #' 
 #' @return
+#' Matrix of parsed output values
 #' @export
-getSnpZygosity <- function(sampleid, chrs = paste0("chr", c(1:22, "X", "Y"))){
+genSnpZygosity <- function(sampleid, chrs = paste0("chr", c(1:22, "X", "Y"))){
   # sampleid <- 'NET-2-001b_02_T_DNA.processed'
   sampleid_dir <- gsub("[^a-zA-Z0-9]", "", sampleid)
   dir.create(sampleid_dir, showWarnings = FALSE)
@@ -29,12 +30,10 @@ getSnpZygosity <- function(sampleid, chrs = paste0("chr", c(1:22, "X", "Y"))){
                              " -o ", out_file)
     categorize_res <- try(system(command = categorize_cmd, intern = TRUE))
     
-    return(data.frame("Time"=as.numeric(parseOutput(categorize_res, "Runtime")),
-                      "In"=parseOutput(categorize_res, "vcf"),
-                      "Out"=parseOutput(categorize_res, "out")))
+    return(c("Time"=as.numeric(parseOutput(categorize_res, "Runtime")),
+             "In"=as.character(parseOutput(categorize_res, "vcf")),
+             "Out"=as.character(parseOutput(categorize_res, "out"))))
   })
-  
-  
-  
+  categorize_results <- t(categorize_results)
   
 }

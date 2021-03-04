@@ -29,6 +29,7 @@ devtools::build_vignettes(pkg)
 devtools::build(pkg)
 devtools::install(pkg)
 # devtools::install_github("quevedor2/aneuploidy_score")
+devtools::install_github("quevedor2/WadingPool", ref = "dev")
 
 # library(AneuploidyScore)
 # AneuploidyScore::listData()

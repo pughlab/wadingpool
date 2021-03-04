@@ -6,8 +6,7 @@
 #' @param results vector of printed statments
 #' @param tag ID tag for the parsed output (e.g. Runtime)
 #'
-#' @return
-#' 
+#' @return Data value for the parsed output
 parseOutput <- function(results, tag){
   runtime <- results[grep(tag, results, ignore.case = TRUE)]
   runtime <- gsub("^.*: ", "", runtime)
