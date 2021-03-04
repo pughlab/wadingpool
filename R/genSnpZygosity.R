@@ -19,7 +19,5 @@ getSnpZygosity <- function(sampleid, chrs = paste0("chr", c(1:22, "X", "Y"))){
   conv.cmd <- paste0(bin_dir, "/categorizeAD.sh", 
                      " -v ", vcf_file, 
                      " -o ", out_file)
-  ./categorizeAD.sh -v x.vcf -o x_test.vcf
   conv.cmd.res <- try(system(command = conv.cmd, intern = TRUE))
 }
-genotypeID.R
