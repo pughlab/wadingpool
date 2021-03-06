@@ -18,7 +18,7 @@ parseOutput <- function(results, tag){
 #' @param mat Matrix 
 #' @param fun Input function
 #' @param margin Margin: col(2) or row(1)
-matall <- function(mat, margin=2, fun){
+allbyall <- function(mat, margin=2, fun){
   apply(mat, margin, function(i){
     apply(mat, margin, function(j){
       fun(i,j)
