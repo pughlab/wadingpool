@@ -13,10 +13,9 @@
 #' @param chrs List of chrs [Default=chr1, chr2, .., chrY]
 #'
 #' @return
+#' A vector of the input, output files and runtime
 #' @export
-#'
-#' @examples
-aggregateAndFilter <- function(sampleid, dbsnp_dir, num_samples=2, 
+aggregateAndFilter <- function(s_paths, dbsnp_dir, num_samples=2, 
                                dbsnp_file='all.common_all_20151104.bed',
                                chrs = paste0("chr", c(1:22, "X", "Y"))){
   
