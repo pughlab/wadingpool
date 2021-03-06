@@ -12,3 +12,16 @@ parseOutput <- function(results, tag){
   runtime <- gsub("^.*: ", "", runtime)
   return(runtime)
 }
+
+#' rowxrow or colxcol execution
+#'
+#' @param mat Matrix 
+#' @param fun Input function
+#' @param margin Margin: col(2) or row(1)
+matall <- function(mat, margin=2, fun){
+  apply(mat, margin, function(i){
+    apply(mat, margin, function(j){
+      fun(i,j)
+    })
+  })
+}
