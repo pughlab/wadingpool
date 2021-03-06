@@ -31,7 +31,7 @@ aggregateAndFilter <- function(s_paths, dbsnp_dir, num_samples=2,
   dir.create(file.path(comb_path, "idx"), recursive = TRUE, showWarnings = FALSE)
   dir.create(file.path(comb_path, "filt"), recursive = TRUE, showWarnings = FALSE)
   
-  aggregate_res <- lapply(chrs, function(chr){
+  aggregate_res <- sapply(chrs, function(chr){
     # Set I/O filenames
     agg_out <- paste0(chr, ".snps")         # combined all SNPs
     line_snps <- paste0(chr, "_lines.txt")  # Line #s for filtered SNPs
@@ -83,5 +83,6 @@ aggregateAndFilter <- function(s_paths, dbsnp_dir, num_samples=2,
                            file.path(comb_path, "filt", pos_snps)), 
                          collapse=",")))
   })
+  return(aggregate_res)
 }
 
