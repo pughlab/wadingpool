@@ -21,7 +21,8 @@ aggregateAndFilter <- function(s_paths, dbsnp_dir, num_samples=2,
   
   # dbsnp_dir <- '/mnt/work1/users/pughlab/references/dbsnp/dbsnp_b146_GRCh37p13/common/bed'
   # dbsnp_file <- 'all.common_all_20151104.bed'
-  # num_samples <- 1
+  # num_samples <- 2
+  # chrs = paste0("chr", c(1:22, "X", "Y"))
   
   self_pkg_name <- 'WadingPool'
   bin_dir <- system.file("bin/", package = self_pkg_name)
