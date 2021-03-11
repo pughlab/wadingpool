@@ -131,11 +131,64 @@ The following are required tools and reference datasets needed to be installed o
 ### Installation
 
 1. Clone the repo
-   ```sh
-   devtools::install_github("quevedor2/WadingPool", ref='master') # Latest stable build
+  ```sh
+  devtools::install_github("quevedor2/WadingPool", ref='master') # Latest stable build
   devtools::install_github("quevedor2/WadingPool", ref='dev') # Development branch
-   ```
+  ```
+2. Set up the dbSNP reference BED files
+* dbSNP files are downloaded from `ftp://ftp.ncbi.nih.gov/snp` and are designed to work with the `common_all` category. According to dbSNP annotation, `common_all` refers to a subset of 00-All categorized as common (minor allele frequency >= 0.01 in at least one of 26 major populations, with at least two unrelated individuals having the minor allele)
+  
+* An example pipeline can viewed in `inst/setup/setup_dbSNP.sh`
+* Download the VCF files:
+  ```sh
+  wget 'ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b146_GRCh37p13/VCF/common_all_20151104.vcf.gz' .
+  wget 'ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b146_GRCh37p13/VCF/common_all_20151104.vcf.gz.tbi' .
+  ```
 
+* Use Tabix to seperate the VCF file into individual chromosome subsets:
+  ```sh
+  module load tabix/0.2.6
+  
+  vcffile='common_all_20180418.vcf.gz'
+  mkdir chr_vcf chr_bed
+
+  ## Use tabix to subset VCF into chromosomes
+  zcat ${vcffile} | grep "^#" > header.txt 
+  for i in $(seq 1 1 22) X Y; do
+    tabix ${vcffile} ${i} > tmp
+    cat header.txt tmp > chr_vcf/chr${i}.vcf
+  done
+  rm tmp header.txt
+  ```
+
+* Use a custom perl script to create a BED file from the VCF files for SNPs that occupy only a single bp 
+  ```sh
+  chrcol=0
+  poscol=1
+  rsidcol=2
+  refcol=3
+  infocol=7
+
+  rm chr_bed/all.${vcffile/.vcf.gz/}.bed
+  time for i in $(seq 1 1 22) X Y; do
+    grep -v "^#" chr_vcf/chr${i}.vcf |\
+    perl -ne 'my @lines = split("\t", $_);
+      my $ref=$lines['${refcol}'];
+      if(length($ref)==1){
+        my $chr=$lines['${chrcol}'];
+        my $end=$lines['${poscol}'];
+        my $rs=$lines['${rsidcol}'];
+        my @caf=$lines['${infocol}'] =~ m/CAF=(.*?),.*?;/;
+
+        print $chr,"\t",
+              $end-1, "\t",
+              $end, "\t",
+              $rs, "\t";
+        printf("%.3f\t.\t.\t.\n", 1-$caf[0]);
+      }' \
+    > chr_bed/chr${i}.bed >> chr_bed/all.${vcffile/.vcf.gz/}.bed
+  done  
+  ```
 
 <!-- USAGE EXAMPLES -->
 ## Usage
