@@ -4,10 +4,16 @@
 \alias{genSnpZygosity}
 \title{Simplifies the SNP Zygosity from MuTect}
 \usage{
-genSnpZygosity(sampleid, chrs = paste0("chr", c(1:22, "X", "Y")))
+genSnpZygosity(
+  sampleid,
+  caller = "GATK",
+  chrs = paste0("chr", c(1:22, "X", "Y"))
+)
 }
 \arguments{
 \item{sampleid}{Vector of sample IDs for the filename [chr].[sampleid].vcf}
+
+\item{caller}{Either 'Mutect' or 'GATK' (collectAllelicCounts)}
 
 \item{chrs}{Chrs for the filename [chr].[sampleid].vcf}
 }

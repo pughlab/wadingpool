@@ -19,7 +19,7 @@ while getopts 'r:a:o:t:hV' flag; do
 done
 
 if($verbose); then
-  printf "Argument tsv: %s\n" "$tsv"
+  printf "Argument vcf: %s\n" "$tsv"
   printf "Argument out: %s\n" "$out"
   printf "Argument ref_col: %d\n" "$ref_col"
   printf "Argument alt_col: %d\n" "$alt_col"

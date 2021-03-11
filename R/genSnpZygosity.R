@@ -7,11 +7,13 @@
 #' 
 #' @param sampleid Vector of sample IDs for the filename [chr].[sampleid].vcf
 #' @param chrs Chrs for the filename [chr].[sampleid].vcf
+#' @param caller Either 'Mutect' or 'GATK' (collectAllelicCounts)
 #' 
 #' @return
 #' Matrix of parsed output values
 #' @export
-genSnpZygosity <- function(sampleid, chrs = paste0("chr", c(1:22, "X", "Y"))){
+genSnpZygosity <- function(sampleid, caller='GATK',
+                           chrs = paste0("chr", c(1:22, "X", "Y"))){
   # sampleid <- 'NET-2-001b_02_T_DNA.processed'
   sampleid_dir <- file.path("tmp", gsub("[^a-zA-Z0-9]", "", sampleid))
   dir.create(sampleid_dir, recursive = TRUE, showWarnings = FALSE)
@@ -20,15 +22,27 @@ genSnpZygosity <- function(sampleid, chrs = paste0("chr", c(1:22, "X", "Y"))){
   bin_dir <- system.file("bin/", package = self_pkg_name)
   
   categorize_results <- sapply(chrs, function(chr){
-    vcf_file <- paste0(chr, ".", sampleid, ".vcf")
-    out_file <- file.path(sampleid_dir, paste0(chr, ".", sampleid, "_out.tsv"))
-    
-    ## Executes the categorizeAD.sh shell script that parses the single-sample
-    #  MuTect VCF output 
-    categorize_cmd <- paste0("sh ", bin_dir, "/categorizeAD.sh", 
-                             " -v ", vcf_file, 
-                             " -o ", out_file)
-    categorize_res <- try(system(command = categorize_cmd, intern = TRUE))
+    if(grepl("^gatk$", caller, ignore.case = T)){
+      tsv_file <- paste0(chr, ".", sampleid, ".allelicCounts.tsv")
+      out_file <- file.path(sampleid_dir, paste0(chr, ".", sampleid, "_out.tsv"))
+      
+      ## Executes the categorizeAD.sh shell script that parses the single-sample
+      #  MuTect VCF output 
+      categorize_cmd <- paste0("sh ", bin_dir, "/categorizeAD_GATK.sh", 
+                               " -t ", tsv_file, 
+                               " -o ", out_file)
+      categorize_res <- try(system(command = categorize_cmd, intern = TRUE))
+    } else if(grepl("^mutect$", caller, ignore.case = T)){
+      vcf_file <- paste0(chr, ".", sampleid, ".vcf")
+      out_file <- file.path(sampleid_dir, paste0(chr, ".", sampleid, "_out.tsv"))
+      
+      ## Executes the categorizeAD.sh shell script that parses the single-sample
+      #  MuTect VCF output 
+      categorize_cmd <- paste0("sh ", bin_dir, "/categorizeAD.sh", 
+                               " -v ", vcf_file, 
+                               " -o ", out_file)
+      categorize_res <- try(system(command = categorize_cmd, intern = TRUE))
+    }
     
     return(c("Time"=as.numeric(parseOutput(categorize_res, "Runtime")),
              "In"=as.character(parseOutput(categorize_res, "vcf")),
