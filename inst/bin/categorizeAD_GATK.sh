@@ -37,7 +37,7 @@ fi
 ## Isolate the AD data and categorize into No coverage (0), Ref.Homozygous (1),
 # Heterozygous (2), or Alt.Homozygous (3) classifications
 start_time=`date +%s`
-grep -v "^@" ${tsv} | tail -n+2 | head | \
+grep -v "^@" ${tsv} | tail -n+2 | \
 perl -ne 'use List::Util qw/sum/;
           chomp $_;
           
