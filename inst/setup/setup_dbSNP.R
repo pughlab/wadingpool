@@ -1,6 +1,6 @@
 library(GenomicRanges)
 library(VariantAnnotation)
-library(optdir)
+library(optparse)
 
 option_list = list(
   make_option(c("-r", "--refdir"), type="character", default=NULL, 
@@ -11,6 +11,8 @@ option_list = list(
 
 opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
+# opt$refdir <- "/mnt/work1/users/pughlab/references/dbsnp/dbsnp_b151_GRCh38p7/chr_vcf"
+# opt$vcf <- 'chr1.vcf'
 setwd(opt$refdir)
 dir.create(file.path("common", "bed"), recursive = T, showWarnings = F)
 
