@@ -21,4 +21,5 @@ Imports:
     S4Vectors,
     GenomeInfoDb,
     VariantAnnotation,
-    stats
+    stats,
+    utils
