@@ -1,4 +1,13 @@
-
+#' Title
+#'
+#' @param filt_dir  to fill in
+#' @param samples  to fill in
+#' @param similarityFun  to fill in
+#' @importFrom utils read.csv
+#' @importFrom stats na.omit
+#' @return
+#' to fill in
+#' @export
 getSampleSimilarity <- function(filt_dir, samples,
                        similarityFun=NULL){
   # similarityFun=NULL
@@ -33,8 +42,8 @@ getSampleSimilarity <- function(filt_dir, samples,
     
     getN <- function(i,j){ sum(!is.na(i) & !is.na(j)) }
     
-    simmat <- WadingPool:::allbyall(mat, margin=2, fun=similarityFun)
-    nmat <- WadingPool:::allbyall(mat, margin=2, fun=getN)
+    simmat <- allbyall(mat, margin=2, fun=similarityFun)
+    nmat <- allbyall(mat, margin=2, fun=getN)
     
     list("jacc"=simmat,
          "n"=nmat)
