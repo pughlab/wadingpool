@@ -2,7 +2,7 @@
 #' 
 #' @description Calculates the nonlinear model fit using an 
 #' Asymptotic Regression Model from and non-linear least squares
-#' from the nlstools::nls and stats::SSasymp functions, where the
+#' from the stats::nls and stats::SSasymp functions, where the
 #' following parameters are being estimated:
 #'  A = Response at 100% saturation (horizontal asymptote)
 #'  R = Response when x = 0
@@ -28,14 +28,14 @@ saturationCurve <- function(dat, pred=NULL, S=NULL, Xin=NULL){
   #                       "SNPs"=samp2$n_mean)[-1,]
   # pred = seq(0,10,by=0.01)
   
+  if(ncol(dat) != 2) stop("Input 'dat' must be a 2 column data.frame")
+  
   colnames(dat) <- c("X", "Response")
   nlsfitSS <- nls(Response ~ SSasymp(X, Asym, R0, lrc),
                   data=dat)
   A <-summary(nlsfitSS)$coefficients[1]   # Response at 100% saturation (horizontal asymptote)
   R <-summary(nlsfitSS)$coefficients[2]   # Response when X = 0
   l <-summary(nlsfitSS)$coefficients[3]   # Natural logarithm of the rate constant
-  
-  pred_snp <- predict(nlsfitSS,list(X=pred))
   
   ## Math Functions
   # Returns the X-value associated with a given saturation (S) value (S*A)

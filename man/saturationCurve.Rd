@@ -22,7 +22,7 @@ S are given
 \description{
 Calculates the nonlinear model fit using an 
 Asymptotic Regression Model from and non-linear least squares
-from the nlstools::nls and stats::SSasymp functions, where the
+from the stats::nls and stats::SSasymp functions, where the
 following parameters are being estimated:
  A = Response at 100% saturation (horizontal asymptote)
  R = Response when x = 0

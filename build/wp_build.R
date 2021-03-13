@@ -21,7 +21,6 @@ usethis::use_package("GenomeInfoDb")
 usethis::use_package("VariantAnnotation")
 usethis::use_package("stats")
 usethis::use_package("utils")
-usethis::use_package("nlstools")
 
 
 devtools::document(pkg)
