@@ -77,9 +77,9 @@ calcExpectedHets <- function(dbsnp_file, coverage=c(1), max_cnt=2){
 #' 95% confidence for genomic distance between those SNPs
 #' @export
 getExpectedN <- function(mu, se, n, genome_size=3.2*10^9){
-  nval <- c("n_low"=(mu - (1.96*se))*n,
-            "n_mean"=mu*n,
-            "n_high"=(mu + (1.96*se))*n)
-  return(c(nval, 
-           setNames((genome_size/nval), c("dist_low", "dist_mean", "dist_high"))))
+  nval <- data.frame("n_low"=(mu - (1.96*se))*n,
+                     "n_mean"=mu*n,
+                     "n_high"=(mu + (1.96*se))*n)
+  return(cbind(nval, 
+               setNames((genome_size/nval), c("dist_low", "dist_mean", "dist_high"))))
 }
