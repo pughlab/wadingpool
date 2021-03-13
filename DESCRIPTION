@@ -22,4 +22,5 @@ Imports:
     GenomeInfoDb,
     VariantAnnotation,
     stats,
-    utils
+    utils,
+    nlstools
