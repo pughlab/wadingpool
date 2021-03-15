@@ -48,7 +48,8 @@ saturationCurve <- function(dat, pred=NULL, S=NULL, Xin=NULL){
                 "R0_coef"=R,
                 "lrc"=l)
   if(!is.null(pred)) retobj[['pred']] <- setNames(as.numeric(predict(nlsfitSS,list(X=pred))), pred)
-  if(!is.null(S)) retobj[['Xfit']] <- getX(A, R, l, S)
-  if(!is.null(Xin)) retobj[['S']] <- getS(A, R, l, Xin)
+  if(!is.null(S)) retobj[['Xfit']] <- setNames(getX(A, R, l, S), S)
+  if(!is.null(S)) retobj[['Yfit']] <- setNames(as.numeric(predict(nlsfitSS,list(X=retobj[['Xfit']]))), S)
+  if(!is.null(Xin)) retobj[['S']] <- setNames(getS(A, R, l, Xin), Xin)
   return(retobj)
 }
