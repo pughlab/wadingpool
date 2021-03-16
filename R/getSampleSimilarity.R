@@ -1,12 +1,19 @@
-#' Title
-#'
-#' @param filt_dir  to fill in
-#' @param samples  to fill in
-#' @param similarityFun  to fill in
+#' Generates a similarity matrix
+#' @description Takes a path to a directory that contains
+#' the [CHR]_filt.snps files and processes each to generate
+#' a similarity matrix using a given similarityFun.  If no
+#' similarityFun is given, it generates one using the default
+#' Jaccard metric.
+#' 
+#' @param filt_dir  Path to directory containing [CHR]_filt.snps
+#' @param samples  Sample vector corresponding to the column names of _filt.snps
+#' @param similarityFun  Similarity function with two parameters, 'i' and 'j'. 
+#' If no similarity function is given, it default to a Jaccard metric
 #' @importFrom utils read.csv
 #' @importFrom stats na.omit
 #' @return
-#' to fill in
+#' Returns a list of similarity matrices, matrix of number of SNPs found between
+#' two samples, and a matrix of number of heterozygous SNPs between two samples
 #' @export
 getSampleSimilarity <- function(filt_dir, samples,
                        similarityFun=NULL){
@@ -41,11 +48,15 @@ getSampleSimilarity <- function(filt_dir, samples,
     }
     
     getN <- function(i,j){ sum(!is.na(i) & !is.na(j)) }
+    getHet <- function(i,j){ sum((i==2) & (j==2),na.rm=T) }
     
     simmat <- allbyall(mat, margin=2, fun=similarityFun)
     nmat <- allbyall(mat, margin=2, fun=getN)
+    hetmat <- allbyall(mat, margin=2, fun=getHet)
     
-    list("jacc"=simmat,
-         "n"=nmat)
+    list("sim"=simmat,
+         "n"=nmat,
+         "het"=hetmat)
   })
+  return(jaccmats)
 }
