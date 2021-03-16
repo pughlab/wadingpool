@@ -62,6 +62,7 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#dbSNP_Reference">Setting dbSNP reference</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -117,7 +118,7 @@ The following are required tools and reference datasets needed to be installed o
   wget 'ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b146_GRCh37p13/VCF/common_all_20151104.vcf.gz.tbi' ${REFPATH}
   ```
 
-### Installation of WadingPool
+### Installation
 
 1. Clone the repo
   ```sh
@@ -125,7 +126,7 @@ The following are required tools and reference datasets needed to be installed o
   devtools::install_github("quevedor2/WadingPool", ref='dev') # Development branch
   ```
 
-### Setting up the dbSNP reference files
+### dbSNP_Reference
 
 A pre-built pipeline to set up the BED file from a dbSNP VCF file that is compatible with WadingPool can viewed in `inst/setup/setup_dbSNP.sh` (**Currently: Only designed to work with hg19/hg38, not the mouse genome**). The following steps outlines the pipeline to allow for user customization:
 
