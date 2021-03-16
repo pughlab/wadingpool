@@ -351,15 +351,15 @@ Project Link: [https://github.com/quevedor2/WadingPool](https://github.com/queve
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/quevedor2/repo.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/quevedor2/WadingPool.svg?style=for-the-badge
 [contributors-url]: https://github.com/quevedor2/WadingPool/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/quevedor2/repo.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/quevedor2/WadingPool.svg?style=for-the-badge
 [forks-url]: https://github.com/quevedor2/WadingPool/network/members
-[stars-shield]: https://img.shields.io/github/stars/quevedor2/repo.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/quevedor2/WadingPool.svg?style=for-the-badge
 [stars-url]: https://github.com/quevedor2/WadingPool/stargazers
-[issues-shield]: https://img.shields.io/github/issues/quevedor2/repo.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/quevedor2/WadingPool.svg?style=for-the-badge
 [issues-url]: https://github.com/quevedor2/WadingPool/issues
-[license-shield]: https://img.shields.io/github/license/quevedor2/repo.svg?style=for-the-badge
-[license-url]: https://github.com/quevedor2/repo/blob/master/LICENSE.txt
+[license-shield]: https://img.shields.io/github/license/quevedor2/WadingPool.svg?style=for-the-badge
+[license-url]: https://github.com/quevedor2/WadingPool/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/quevedor
