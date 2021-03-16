@@ -2,20 +2,26 @@
 % Please edit documentation in R/getSampleSimilarity.R
 \name{getSampleSimilarity}
 \alias{getSampleSimilarity}
-\title{Title}
+\title{Generates a similarity matrix}
 \usage{
 getSampleSimilarity(filt_dir, samples, similarityFun = NULL)
 }
 \arguments{
-\item{filt_dir}{to fill in}
+\item{filt_dir}{Path to directory containing [CHR]_filt.snps}
 
-\item{samples}{to fill in}
+\item{samples}{Sample vector corresponding to the column names of _filt.snps}
 
-\item{similarityFun}{to fill in}
+\item{similarityFun}{Similarity function with two parameters, 'i' and 'j'. 
+If no similarity function is given, it default to a Jaccard metric}
 }
 \value{
-to fill in
+Returns a list of similarity matrices, matrix of number of SNPs found between
+two samples, and a matrix of number of heterozygous SNPs between two samples
 }
 \description{
-Title
+Takes a path to a directory that contains
+the [CHR]_filt.snps files and processes each to generate
+a similarity matrix using a given similarityFun.  If no
+similarityFun is given, it generates one using the default
+Jaccard metric.
 }
