@@ -7,7 +7,7 @@ pdir <- args[1]
 vcfFile <- args[2]
 
 pdir <- '/mnt/work1/users/pughlab/projects/NET-SEQ/shallow_wgs/variant_calling/mutect_common'
-vcfFile <- 'merge.vcf'
+vcfFile <- 'merge_test.vcf'
 
 mvcf <- readVcf(file.path(pdir, "output", "filt_all", vcfFile))
 
@@ -18,9 +18,13 @@ genotype <- genotype[,-ignore_idx]
 geno_vals <- apply(genotype, 2, function(sample_vcf){
   zyg.vec <- sapply(sample_vcf, function(x){
     zyg <- NA
+    
+    af_id <- try( x / sum(x))
+    
     if(length(x) > 0){
       af_id <- try( x / sum(x))
       if(any(is.nan(af_id))) af_id <- c(-1, -1)
+      
 
       if(af_id[1] == 1) zyg <- 'REF.HOM' else if(af_id[1] > 0) zyg <- 'HET' else if(af_id[1] == -1) zyg <- 'NOCOV' else zyg <- 'ALT.HOM'
     }
