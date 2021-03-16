@@ -235,7 +235,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 ### Generate_SNP_Matrix
 1. User **MUST** call the SNP sites from the BAM file. Due to differences in user environments and HPC setups, I've included bash-scripts that I used in a SLURM and TORQUE workspace to call using either `GATK` (fast ~14min) or `Mutect` (slow ~24hrs):
-* GATK4: [runGATKCollectAllelicCount.sh](https://github.com/quevedor2/WadingPool/blob/dev/inst/external_tools/runGATKCollectAllelicCount.sh)
+* GATK4: [runGATKCollectAllelicCount.sh](https://github.com/quevedor2/WadingPool/blob/master/inst/external_tools/runGATKCollectAllelicCount.sh)
 * MuTect: [runMutect_sample.sh](https://github.com/quevedor2/WadingPool/blob/master/inst/external_tools/runMutect_sample.sh)
 
 2. Use the `genSnpZygosity()` function to format either the `tsv` or `vcf` outputted from Step1 into a single-sample SNP file. This function utilizes the `categorizeAD_GATK.sh` script found in `inst/bin/`, that uses a custom Perl script to format the SNPs from the input data into either 0, 1, 2, 3 outputs.
@@ -267,34 +267,37 @@ _For more examples, please refer to the [Documentation](https://example.com)_
   ```
 
 4. Output data should now be stored in:
-```
-── tmp                        # Main output folder
-    ├── combined
-    │   ├── all.snps            # Unfiltered SNPs
-    │   ├── filt
-    │   │   ├── all_filt.snps   # Filtered SNPs
-    │   │   ├── all_pos.snps    # Filtered dbSNP BED file
-    │   └── idx
-    │       ├── all_lines.txt   # Index of SNPs to remove
-```
+  ```
+  ── tmp                        # Main output folder
+      ├── combined
+      │   ├── all.snps            # Unfiltered SNPs
+      │   ├── filt
+      │   │   ├── all_filt.snps   # Filtered SNPs
+      │   │   ├── all_pos.snps    # Filtered dbSNP BED file
+      │   └── idx
+      │       ├── all_lines.txt   # Index of SNPs to remove
+  ```
 
 and contains two main files `[CHR]_filt.snps`:
-```
-1,0,1,0
-1,0,1,0
-1,0,1,0
-1,0,0,1
-```
+  ```
+  1,0,1,0
+  1,0,1,0
+  1,0,1,0
+  1,0,0,1
+  ```
 and `[CHR]_pos.snps`:
-```
-1	51478	51479	rs116400033	0.128	.	.	.
-1	51746	51747	rs567078550	0.002	.	.	.
-1	51750	51751	rs538930828	0.002	.	.	.
-1	54638	54639	rs540298864	0.001	.	.	.
-```
+  ```
+  1	51478	51479	rs116400033	0.128	.	.	.
+  1	51746	51747	rs567078550	0.002	.	.	.
+  1	51750	51751	rs538930828	0.002	.	.	.
+  1	54638	54639	rs540298864	0.001	.	.	.
+  ```
 
 ### Genotype_Similarity
-
+1. Work in progress:
+  ```R 
+  getSampleSimilarity(filt_dir, samples)
+  ```
 
 
 
