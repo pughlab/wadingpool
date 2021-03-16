@@ -65,7 +65,14 @@
         <li><a href="#dbSNP_Reference">Setting dbSNP reference</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
+    <li>
+      <a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#simulations">Simulate coverage & performance</a></li>
+        <li><a href="#generate_SNP_matrix">Generate simplified SNP matrix</a></li>
+        <li><a href="#genotype_similarity">Calculate sample similarity</a></li>
+      </ul>
+    </li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -187,9 +194,50 @@ A pre-built pipeline to set up the BED file from a dbSNP VCF file that is compat
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+This space highlights the main functions of the WadingPool package, simplified examples of how they are used, and a basic overview of how to interpret the data.
 
 _For more examples, please refer to the [Documentation](https://example.com)_
+
+### Simulations
+Heterozygous SNP simulations:
+1. Look at all SNPs from dbSNP with a MAF >= 0.01 (~7M SNPs)
+2. Use the MAF as a probability of a given SNP being heterozygous
+3. Use a Poisson distribution to simulate a given coverage for each SNP (i.e. for a coverage of 0.5x, lambda=0.5; rnorm(n=num_snps, lambda=0.5)
+4. Use a geometric expansion series to calculate the probability of obtaining coverage on both the Ref and Alt read for each SNP
+5. Calculate the expected value and 95% standard error for a heterozygous SNP across the entire genome
+6. Multiply the expected value and SE by the number of SNPs to get the Expected # of heterozygous SNPs in a genome for a given coverage
+7. Repeat process 2-6 for  for multiple different coverages [seq(0, 3, by=0.1)]
+8. Fit a nonlinear asymptotic regression model to the estimated # of heterozygous SNPs per coverage
+
+  ```R 
+  # Steps 2-5: Calculates expected value for heterozygous SNPs given coverage
+  exp_hets <- calcExpectedHets(grch38_dbsnp, coverage=seq(0,3,by=0.1))
+  
+  # Step 6: Calculates expected # of SNPs for a given coverage
+  ## Number of Het.SNPs found in a single-sample
+  samp1 <- getExpectedN(mu = exp_hets['mean',], 
+                        se = exp_hets['se',], 
+                        n = exp_hets['n',])
+  ## Number of Het.SNPs expected to found in common between two samples
+  samp2 <- getExpectedN(mu = exp_hets['meansq',], 
+                        se = exp_hets['se',], 
+                        n = exp_hets['n',])
+  
+  # Step 8: Fits an asymptotic regression model to the data
+  ## 
+  singlesample=data.frame("cov"=as.numeric(rownames(samp2)),
+                          "SNPs"=samp1$n_mean)[-1,]
+  single_sat <- saturationCurve(singlesample,
+                              pred = 1, # Predicting for 1x coverage
+                              S = 0.95, # Predicting Num. of HET SNPs at 0.95 saturation
+                              Xin = 1) # Predicting saturation for 1x coverage
+  ```
+
+### Generate_SNP_Matrix
+
+### Genotype_Similarity
+
+
 
 
 
