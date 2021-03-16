@@ -1,10 +1,6 @@
 <!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
-***
-***
+*** Best-README-Template:
+*** https://github.com/othneildrew/Best-README-Template
 ***
 *** To avoid retyping too much info. Do a search and replace for the following:
 *** quevedor2, WadingPool, twitter_handle, email, project_title, project_description
@@ -15,9 +11,6 @@
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 [![Contributors][contributors-shield]][contributors-url]
@@ -84,36 +77,35 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
+<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 A shallow/low-pass whole-genome analaysis toolkit, designed to do the following tasks:
 * Identify genetic identity using dbSNP estimation
 * Report QC metrics on alignment
 * Copy-number calling using QDNAseq or IchorCNA
 
 
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`quevedor2`, `WadingPool`, `twitter_handle`, `email`, `project_title`, `project_description`
-
-
 ### Built With
 
-* []()
-* []()
-* []()
-
-
+* [R v3.6.1](https://cran.r-project.org/)
+* [Perl v5.10.1](http://www.perl.org/)
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
+WadingPool requires the use of R for analytic processes and Perl for preprocessing and file manipulation to be executed in a UNIX shell.
+
 
 ### Prerequisites
 
 The following are required tools and reference datasets needed to be installed on your system prior to running WadingPool:
-* dbSNP bed file
+
+^ Tool ^ Version ^ Purpose ^
+| GATK | v4.0.5.1 | Calls the allelic counts at SNP sites |
+| MuTect | v1.1.5 | [Optional] Alternative to GATK to call variants at SNP sites |
+| Genome | hg19/hg38/mm38 | Reference genome |
+| Tabix | 0.2.6 | Works with the dbSNP VCF file to subset by chromosomes |
+
+* **dbSNP bed file**: The dbSNP file indicates which SNP sites of a given MAF (>0.01) should be used for zygosity/genomic identity analysis.
   ```sh
   # human_9606_b146_GRCh37p13
   # dbSNP b146; GRCh37
@@ -123,29 +115,29 @@ The following are required tools and reference datasets needed to be installed o
   REFPATH='/path/to/referenceDir'
   wget 'ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b146_GRCh37p13/VCF/common_all_20151104.vcf.gz' ${REFPATH}
   wget 'ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b146_GRCh37p13/VCF/common_all_20151104.vcf.gz.tbi' ${REFPATH}
-  
-  # Run the setup_dbSNP.R file found in the inst/setup folder:
-  Rscript setup_dbSNP.R --refdir ${REFPATH} --vcf common_all_20151104.vcf.gz
   ```
 
-### Installation
+### Installation of WadingPool
 
 1. Clone the repo
   ```sh
   devtools::install_github("quevedor2/WadingPool", ref='master') # Latest stable build
   devtools::install_github("quevedor2/WadingPool", ref='dev') # Development branch
   ```
-2. Set up the dbSNP reference BED files
+
+### Setting up the dbSNP reference files
+
+A pre-built pipeline to set up the BED file from a dbSNP VCF file that is compatible with WadingPool can viewed in `inst/setup/setup_dbSNP.sh` (**Currently: Only designed to work with hg19/hg38, not the mouse genome**). The following steps outlines the pipeline to allow for user customization:
+
+1. Set up the dbSNP reference BED files
 * dbSNP files are downloaded from `ftp://ftp.ncbi.nih.gov/snp` and are designed to work with the `common_all` category. According to dbSNP annotation, `common_all` refers to a subset of 00-All categorized as common (minor allele frequency >= 0.01 in at least one of 26 major populations, with at least two unrelated individuals having the minor allele)
-  
-* An example pipeline can viewed in `inst/setup/setup_dbSNP.sh`
-* Download the VCF files:
   ```sh
   wget 'ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b146_GRCh37p13/VCF/common_all_20151104.vcf.gz' .
   wget 'ftp://ftp.ncbi.nih.gov/snp/organisms/human_9606_b146_GRCh37p13/VCF/common_all_20151104.vcf.gz.tbi' .
   ```
 
-* Use Tabix to seperate the VCF file into individual chromosome subsets:
+2. Separate the VCF file into individual chromosome subsets:
+
   ```sh
   module load tabix/0.2.6
   
@@ -161,7 +153,8 @@ The following are required tools and reference datasets needed to be installed o
   rm tmp header.txt
   ```
 
-* Use a custom perl script to create a BED file from the VCF files for SNPs that occupy only a single bp 
+3. Use a custom perl script to create a BED file from the VCF files for SNPs that occupy only a single bp 
+
   ```sh
   chrcol=0
   poscol=1
@@ -249,14 +242,14 @@ Project Link: [https://github.com/quevedor2/WadingPool](https://github.com/queve
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/quevedor2/repo.svg?style=for-the-badge
-[contributors-url]: https://github.com/quevedor2/repo/graphs/contributors
+[contributors-url]: https://github.com/quevedor2/WadingPool/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/quevedor2/repo.svg?style=for-the-badge
-[forks-url]: https://github.com/quevedor2/repo/network/members
+[forks-url]: https://github.com/quevedor2/WadingPool/network/members
 [stars-shield]: https://img.shields.io/github/stars/quevedor2/repo.svg?style=for-the-badge
-[stars-url]: https://github.com/quevedor2/repo/stargazers
+[stars-url]: https://github.com/quevedor2/WadingPool/stargazers
 [issues-shield]: https://img.shields.io/github/issues/quevedor2/repo.svg?style=for-the-badge
-[issues-url]: https://github.com/quevedor2/repo/issues
+[issues-url]: https://github.com/quevedor2/WadingPool/issues
 [license-shield]: https://img.shields.io/github/license/quevedor2/repo.svg?style=for-the-badge
 [license-url]: https://github.com/quevedor2/repo/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/quevedor2
+[linkedin-url]: https://linkedin.com/in/quevedor
