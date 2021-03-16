@@ -199,7 +199,7 @@ This space highlights the main functions of the WadingPool package, simplified e
 _For more examples, please refer to the [Documentation](https://example.com)_
 
 ### Simulations
-Heterozygous SNP simulations:
+#### Heterozygous SNP simulations:
 1. Look at all SNPs from dbSNP with a MAF >= 0.01 (~7M SNPs)
 2. Use the MAF as a probability of a given SNP being heterozygous
 3. Use a Poisson distribution to simulate a given coverage for each SNP (i.e. for a coverage of 0.5x, lambda=0.5; rnorm(n=num_snps, lambda=0.5)
@@ -234,6 +234,64 @@ Heterozygous SNP simulations:
   ```
 
 ### Generate_SNP_Matrix
+1. User **MUST** call the SNP sites from the BAM file. Due to differences in user environments and HPC setups, I've included bash-scripts that I used in a SLURM and TORQUE workspace to call using either `GATK` (fast ~14min) or `Mutect` (slow ~24hrs):
+* GATK4: [runGATKCollectAllelicCount.sh](https://github.com/quevedor2/WadingPool/blob/dev/inst/external_tools/runGATKCollectAllelicCount.sh)
+* MuTect: [runMutect_sample.sh](https://github.com/quevedor2/WadingPool/blob/master/inst/external_tools/runMutect_sample.sh)
+
+2. Use the `genSnpZygosity()` function to format either the `tsv` or `vcf` outputted from Step1 into a single-sample SNP file. This function utilizes the `categorizeAD_GATK.sh` script found in `inst/bin/`, that uses a custom Perl script to format the SNPs from the input data into either 0, 1, 2, 3 outputs.
+ * 0: No coverage - The SNP is covered by <2 reads
+ * 1: REF.HOMOZYGOUS - All reads support the reference allele
+ * 2: HETEROZYGOUS - The reads support both the REF and ALT allele
+ * 3: ALT.HOMOZYGOUS - All reads support the alternate allele
+
+  ```R
+  # Detect all samples outputted from GATK4
+  suffix <- 'allelicCounts.tsv'
+  files <- list.files(PDIR, pattern=paste0(".", suffix, "$"))
+  chrs <- 'all'
+  samples <- gsub(paste0("^", unique(gsub("[0-9XY]", "", chrs)), 
+                         ".*?\\.(.*)",
+                         paste0(".", suffix, "$")), "\\1", files)
+  
+  # Call the SNP Zygosity
+  snp_results <- lapply(samples, genSnpZygosity, caller='GATK', chrs=chrs)
+  ```
+
+3. Use the `aggregateAndFilter()` function to combine all the samples outputted from Step 2 and store them in a single comma-separated matrix flat file. It will also use the `getLinesFromFile.py` perl script stored in `inst/bin` to identify  and remove SNPs where fewer than 2 samples have enough coverage (0). It will do the same with the bed file from dbSNP to maintain the same genomic location mapping:
+
+  ```R
+  s_paths <- file.path("tmp", gsub("[^a-zA-Z0-9]", "", samples), 
+                       paste0("[ID].", samples, "_out.tsv"))
+  agg_results <- aggregateAndFilter(s_paths, num_samples=2, chrs=chrs,
+                                    dbsnp_file='all.common_all_20151104.bed',
+  ```
+
+4. Output data should now be stored in:
+```
+── tmp                        # Main output folder
+    ├── combined
+    │   ├── all.snps            # Unfiltered SNPs
+    │   ├── filt
+    │   │   ├── all_filt.snps   # Filtered SNPs
+    │   │   ├── all_pos.snps    # Filtered dbSNP BED file
+    │   └── idx
+    │       ├── all_lines.txt   # Index of SNPs to remove
+```
+
+and contains two main files `[CHR]_filt.snps`:
+```
+1,0,1,0
+1,0,1,0
+1,0,1,0
+1,0,0,1
+```
+and `[CHR]_pos.snps`:
+```
+1	51478	51479	rs116400033	0.128	.	.	.
+1	51746	51747	rs567078550	0.002	.	.	.
+1	51750	51751	rs538930828	0.002	.	.	.
+1	54638	54639	rs540298864	0.001	.	.	.
+```
 
 ### Genotype_Similarity
 
