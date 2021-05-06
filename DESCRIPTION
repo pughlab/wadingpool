@@ -23,4 +23,10 @@ Imports:
     VariantAnnotation,
     stats,
     utils,
-    nlstools
+    nlstools,
+    assertthat
+Suggests: 
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
