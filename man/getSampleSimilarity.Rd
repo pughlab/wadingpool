@@ -4,14 +4,25 @@
 \alias{getSampleSimilarity}
 \title{Generates a similarity matrix}
 \usage{
-getSampleSimilarity(filt_dir, samples, similarityFun = NULL)
+getSampleSimilarity(
+  filt_dir,
+  samples,
+  similarityFun = NULL,
+  pattern = "filt.snps$",
+  rm_nocov = FALSE
+)
 }
 \arguments{
 \item{filt_dir}{Path to directory containing [CHR]_filt.snps}
 
 \item{samples}{Sample vector corresponding to the column names of _filt.snps}
 
-\item{similarityFun}{Similarity function with two parameters, 'i' and 'j'. 
+\item{similarityFun}{Similarity function with two parameters, 'i' and 'j'.}
+
+\item{pattern}{Pattern for the aggregate SNPs file (Default="filt.snps$")}
+
+\item{rm_nocov}{If no filtering process took place prior, setting this to TRUE
+will remove all SNPs where no sample have any coverage (Default=FALSE)
 If no similarity function is given, it default to a Jaccard metric}
 }
 \value{

@@ -51,6 +51,7 @@ aggregateAndFilter <- function(s_paths, dbsnp_dir, num_samples=2,
     paste_res <- try(system(command = paste_cmd, intern = TRUE))
     
     ## Identify SNPs that are covered in X number of samples
+    # awk -F\',\' \'{ for(i=1; i<=NF;i++) if ($i!=0) j++; if (j >= [num.samples]) print NR; j=0 }\' [agg_out] > [line_snps]
     awk_cmd <- paste0('awk -F\',\' \'{ for(i=1; i<=NF;i++) if ($i!=0) j++; ', 
                       'if (j >= ', num_samples, ') print NR; j=0 }\' ',
                       file.path(comb_path, agg_out), " > ", 
@@ -58,16 +59,16 @@ aggregateAndFilter <- function(s_paths, dbsnp_dir, num_samples=2,
     awk_res <- try(system(command = awk_cmd, intern = TRUE))
     
     ## Isolate the SNPs that are covered in X number of samples
-    # perl getLinesFromFile.py ${linesnps} ${snps} > ${filtsnps}
-    extlines_cmd <- paste0("perl ", bin_dir, "/getLinesFromFile.py ", 
+    # perl getLinesFromFile.pl ${linesnps} ${snps} > ${filtsnps}
+    extlines_cmd <- paste0("perl ", bin_dir, "/getLinesFromFile.pl ", 
                            file.path(comb_path, "idx", line_snps), " ", 
                            file.path(comb_path, agg_out), 
                            "> ", file.path(comb_path, "filt", filt_snps))
     extlines_res <- try(system(command = extlines_cmd, intern = TRUE))
     
     ## Isolate the genomic loci for the SNPs from dbSNP reference:
-    # perl getLinesFromFile.py ${linesnps} ${dbsnpdir}/${dbsnpfile} > ${possnps}
-    dbsnpiso_cmd <- paste0("perl ", bin_dir, "/getLinesFromFile.py ", 
+    # perl getLinesFromFile.pl ${linesnps} ${dbsnpdir}/${dbsnpfile} > ${possnps}
+    dbsnpiso_cmd <- paste0("perl ", bin_dir, "/getLinesFromFile.pl ", 
                            file.path(comb_path, "idx", line_snps), " ", 
                            file.path(dbsnp_dir, dbsnpf), 
                            "> ", file.path(comb_path, "filt", pos_snps))
