@@ -24,6 +24,12 @@ usethis::use_package("GenomeInfoDb")
 usethis::use_package("VariantAnnotation")
 usethis::use_package("stats")
 usethis::use_package("utils")
+usethis::use_package("dplyr")
+usethis::use_package("purrr")
+usethis::use_package("DescTools")
+usethis::use_package("ggplot2")
+usethis::use_package("reshape2")
+usethis::use_package("gridExtra")
 
 
 devtools::load_all()
