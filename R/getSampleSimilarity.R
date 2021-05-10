@@ -59,7 +59,7 @@ getSampleSimilarity <- function(filt_dir, samples,
     getN <- function(i,j){ sum(!is.na(i) & !is.na(j)) }
     getHet <- function(i,j){ sum((i==2) & (j==2),na.rm=T) }
     
-    simmat <- WadingPool:::allbyall(mat, margin=2, fun=similarityFun)
+    simmat <- allbyall(mat, margin=2, fun=similarityFun)
     nmat <- allbyall(mat, margin=2, fun=getN)
     hetmat <- allbyall(mat, margin=2, fun=getHet)
     

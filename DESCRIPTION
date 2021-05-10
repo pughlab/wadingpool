@@ -24,7 +24,13 @@ Imports:
     stats,
     utils,
     nlstools,
-    assertthat
+    assertthat,
+    dplyr,
+    purrr,
+    DescTools,
+    ggplot2,
+    reshape2,
+    gridExtra
 Suggests: 
     testthat,
     knitr,
