@@ -30,6 +30,7 @@ usethis::use_package("DescTools")
 usethis::use_package("ggplot2")
 usethis::use_package("reshape2")
 usethis::use_package("gridExtra")
+usethis::use_package("depmixS4")
 
 
 devtools::load_all()

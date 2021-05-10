@@ -30,7 +30,8 @@ Imports:
     DescTools,
     ggplot2,
     reshape2,
-    gridExtra
+    gridExtra,
+    depmixS4
 Suggests: 
     testthat,
     knitr,
