@@ -10,22 +10,23 @@
 #' @param tiles GenomicRanges object for corresponding chrs and bins.  If none is given, it
 #' will fill in the genomic poisition randomly (Default=NULL)
 #' @param is.sim Boolean flag for whether data is simulation or not (Default=FALSE)
+#' @param ret.raw Boolean flag to return the fitted model depmixS4 object
 #'
 #' @importFrom depmixS4 depmix
 #' @importFrom depmixS4 fit
 #' @importFrom depmixS4 posterior
-#' @importFrom depmixS4 depmixS4
+#' @importFrom depmixS4 em.control
 #' @importFrom GenomeInfoDb seqnames
 #' 
 #' @return
 #' Dataframe containing the emission proabbility for each state and a fitted HMM
 #' @export
-fitHMM <- function(sample, het_cnt, states=2, family=poisson(), tiles=NULL, is.sim=FALSE){
+fitHMM <- function(sample, het_cnt, states=2, family=poisson(), tiles=NULL, is.sim=FALSE, ret.raw=FALSE){
   ## Fit HMM with best estimate of k
   # sample <- 'obs'
   mod <- depmix(as.formula(paste0(sample, '~ 1')), data = as.data.frame(het_cnt), 
                 nstates=states, family=family, trstart = runif(states^2))
-  fit.mod <- fit(mod, emcon=em.control(rand=F))
+  fit.mod <- fit(mod, emcon=em.control(random.start=F))
   
   # Label the estimated States based on posterior prob
   est.states     <- cbind("obs"=het_cnt[,sample], posterior(fit.mod))
@@ -54,7 +55,11 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(), tiles=NULL, is.s
                                act_cols = c('act.state', 'act.state.label'))
   }
   
-  return(est.states$model)
+  ret_obj <- est.states$model
+  if(ret.raw){
+    ret_obj <- fit.mod
+  }
+  return(ret_obj)
 }
 
 

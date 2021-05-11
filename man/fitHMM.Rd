@@ -10,7 +10,8 @@ fitHMM(
   states = 2,
   family = poisson(),
   tiles = NULL,
-  is.sim = FALSE
+  is.sim = FALSE,
+  ret.raw = FALSE
 )
 }
 \arguments{

@@ -31,7 +31,8 @@ Imports:
     ggplot2,
     reshape2,
     gridExtra,
-    depmixS4
+    depmixS4,
+    caret
 Suggests: 
     testthat,
     knitr,
