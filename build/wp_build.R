@@ -40,6 +40,8 @@ devtools::build_vignettes(pkg)
 
 devtools::build(pkg)
 devtools::install(pkg)
+detach("package:WadingPool", unload=TRUE)
+library(WadingPool)
 # devtools::install_github("quevedor2/aneuploidy_score")
 devtools::install_github("quevedor2/WadingPool", ref = "dev")
 

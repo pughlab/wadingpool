@@ -14,6 +14,7 @@
 #' @importFrom depmixS4 depmix
 #' @importFrom depmixS4 fit
 #' @importFrom depmixS4 posterior
+#' @importFrom depmixS4 depmixS4
 #' @importFrom GenomeInfoDb seqnames
 #' 
 #' @return
@@ -21,10 +22,10 @@
 #' @export
 fitHMM <- function(sample, het_cnt, states=2, family=poisson(), tiles=NULL, is.sim=FALSE){
   ## Fit HMM with best estimate of k
-  sample <- 'obs'
-  mod <- depmix(as.formula(paste0(sample, '~ 1')), 
-                data = as.data.frame(het_cnt), nstates=states, family=family)
-  fit.mod <- fit(mod)
+  # sample <- 'obs'
+  mod <- depmix(as.formula(paste0(sample, '~ 1')), data = as.data.frame(het_cnt), 
+                nstates=states, family=family, trstart = runif(states^2))
+  fit.mod <- fit(mod, emcon=em.control(rand=F))
   
   # Label the estimated States based on posterior prob
   est.states     <- cbind("obs"=het_cnt[,sample], posterior(fit.mod))
@@ -48,10 +49,57 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(), tiles=NULL, is.s
   
   if(is.sim){
     est.states$act.state.label <- het_cnt$state
-    est.states$act.state <- 0
+    est.states$act.state <- NA
     est.states <- .genStateMap(est.states, est_cols = c('state', 'state.label'), 
                                act_cols = c('act.state', 'act.state.label'))
   }
   
   return(est.states$model)
+}
+
+
+#' @description supporting function to get the mapping between
+#' state and state labels
+#'
+#' @param model from fitHmm()
+#' @param est_cols 2 element character vector for the estimated [state, state.label] columns
+#' @param act_cols If known, 2 element character vector for the actual [state, state.label] columns
+#'
+#' @return
+#' 2 element list:
+#'   'model': Model with the actual states mapped to be concordant with estimated labels
+#'   'map': Unique mapping between state and state-labels
+.genStateMap <- function(model, est_cols, act_cols=NULL){
+  uniq_map <- unique(model[,est_cols])
+  uniq_map <- uniq_map[order(uniq_map[,est_cols[2]]),]
+  
+  if(!is.null(act_cols)){
+    # Re-assign the "Actual" state - state_label mapping to be concordant with the 
+    # "Estimated" state - state_label mapping
+    .mapStates <- function(x, uniq_map){
+      uniq_map[match(x, uniq_map[,2]),1]
+    }
+    
+    ## Map state value for estimate state-labels to actual state-labels
+    model[,act_cols[1]] <- model[,act_cols[2]] %>%
+      map(.mapStates, uniq_map) %>% 
+      unlist
+    
+    ## Check if all actual states have a proper mapping
+    uniq_map_act <- unique(model[,act_cols])
+    uniq_map_act <- uniq_map_act[order(uniq_map_act[,act_cols[2]]),]
+    na_idx <- is.na(uniq_map_act[,1])
+    if(any(na_idx)){
+      # Case if actual states are more than the estimated states
+      uniq_map_act[which(na_idx),1] <- c(1:10)[-sort(uniq_map_act[,1])][1:sum(na_idx)]
+      model[,act_cols[1]] <- model[,act_cols[2]] %>%
+        map(.mapStates, uniq_map_act) %>% 
+        unlist
+    }
+
+    if(!all(unique(model[,act_cols[2]]) %in% uniq_map[,2])) warning("Actual labels do not match the estimated labels")
+    assert_that(!any(is.na(uniq_map_act[,1])), !any(is.na(uniq_map[,1])),
+                msg="Unmapped states in estimated or actual states")
+  }
+  return(list("map"=uniq_map, "model"=model, "act.map"=uniq_map_act))
 }
