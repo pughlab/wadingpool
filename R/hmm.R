@@ -11,6 +11,7 @@
 #' will fill in the genomic poisition randomly (Default=NULL)
 #' @param is.sim Boolean flag for whether data is simulation or not (Default=FALSE)
 #' @param ret.raw Boolean flag to return the fitted model depmixS4 object
+#' @param nstart Number of starts to try out for EM (Default=10)
 #'
 #' @importFrom depmixS4 depmix
 #' @importFrom depmixS4 fit
@@ -21,12 +22,30 @@
 #' @return
 #' Dataframe containing the emission proabbility for each state and a fitted HMM
 #' @export
-fitHMM <- function(sample, het_cnt, states=2, family=poisson(), tiles=NULL, is.sim=FALSE, ret.raw=FALSE){
-  ## Fit HMM with best estimate of k
-  # sample <- 'obs'
+fitHMM <- function(sample, het_cnt, states=2, family=poisson(), 
+                   nstart=10, tiles=NULL, is.sim=FALSE, ret.raw=FALSE,
+                   multi=FALSE){
+  # Set base transition and emission expectations
+  trstart <- matrix(runif(states^2, min=0, max=0.4), ncol=states)
+  diag(trstart) <- runif(n = states, min=0.7, max=0.9)  # Non-changing states
+  if(family$family == 'gaussian'){
+    # gaussians centered around 0, separated by 0.5, sd=0.1
+    respstart <- seq(0.5, states*0.5, by=0.5)
+    respstart <- as.vector(rbind(respstart - median(respstart), rep(0.1, states)))
+  }
+  
+
   mod <- depmix(as.formula(paste0(sample, '~ 1')), data = as.data.frame(het_cnt), 
-                nstates=states, family=family, trstart = runif(states^2))
-  fit.mod <- fit(mod, emcon=em.control(random.start=F))
+                nstates=states, family=family, trstart = unlist(trstart), respstart = unlist(respstart))
+  # 
+  fit.mod <- tryCatch({
+    if(multi){
+      multistart(mod, nstart=nstart, initIters=10)
+    } else {
+      fit(mod, emcon=em.control(random.start=F))
+    }
+  }, error=function(e){NULL})
+  if(is.null(fit.mod)) return(fit.mod)
   
   # Label the estimated States based on posterior prob
   est.states     <- cbind("obs"=het_cnt[,sample], posterior(fit.mod))
@@ -57,7 +76,11 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(), tiles=NULL, is.s
   
   ret_obj <- est.states$model
   if(ret.raw){
-    ret_obj <- fit.mod
+    ret_obj <- list("df"=est.states$model, "model"=fit.mod)
+    # metrics(ret_obj$df$state.label, ret_obj$df$act.state.label)$micro$F1
+    # metrics(ret_obj$df$state.label, ret_obj$df$act.state.label)
+    # summary(ret_obj$model)
+    
   }
   return(ret_obj)
 }
