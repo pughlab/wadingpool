@@ -27,6 +27,8 @@ fitHMM(
 will fill in the genomic poisition randomly (Default=NULL)}
 
 \item{is.sim}{Boolean flag for whether data is simulation or not (Default=FALSE)}
+
+\item{ret.raw}{Boolean flag to return the fitted model depmixS4 object}
 }
 \value{
 Dataframe containing the emission proabbility for each state and a fitted HMM

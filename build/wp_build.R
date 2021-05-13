@@ -31,6 +31,7 @@ usethis::use_package("ggplot2")
 usethis::use_package("reshape2")
 usethis::use_package("gridExtra")
 usethis::use_package("depmixS4")
+usethis::use_package("caret")
 
 
 devtools::load_all()
