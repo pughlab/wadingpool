@@ -17,6 +17,7 @@
 #' @importFrom depmixS4 fit
 #' @importFrom depmixS4 posterior
 #' @importFrom depmixS4 em.control
+#' @importFrom depmixS4 multistart
 #' @importFrom GenomeInfoDb seqnames
 #' 
 #' @return

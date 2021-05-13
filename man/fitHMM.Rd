@@ -9,9 +9,11 @@ fitHMM(
   het_cnt,
   states = 2,
   family = poisson(),
+  nstart = 10,
   tiles = NULL,
   is.sim = FALSE,
-  ret.raw = FALSE
+  ret.raw = FALSE,
+  multi = FALSE
 )
 }
 \arguments{
@@ -22,6 +24,8 @@ fitHMM(
 \item{states}{Integer for expected number of states}
 
 \item{family}{Family of distribution to use (default=poisson())}
+
+\item{nstart}{Number of starts to try out for EM (Default=10)}
 
 \item{tiles}{GenomicRanges object for corresponding chrs and bins.  If none is given, it
 will fill in the genomic poisition randomly (Default=NULL)}
