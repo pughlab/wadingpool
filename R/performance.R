@@ -7,7 +7,7 @@
 #' @param reference vector of actual classes
 #'
 #' @importFrom caret confusionMatrix
-#' @importFrom assert_that assertthat
+#' @importFrom assertthat assert_that
 #' 
 #' @return
 #' 2 element list of a dataframe containing micro and macro F1 scores with 
@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-#' metrics(predictions=sample(1:4, 1000, replace=T), reference=sample(1:4, 1000, replace=T))
+#' metrics(predictions=sample(1:4, 1000, replace=TRUE), reference=sample(1:4, 1000, replace=TRUE))
 metrics <- function(predictions, reference){
   # predictions <- hmm1$state
   # reference <- hmm1$act.state
@@ -37,6 +37,7 @@ metrics <- function(predictions, reference){
   micro_f1  <- cbind(pr, "F1"=.f1(pr = pr$Precision, re = pr$Recall))
   
   # macroF1
+  if(!is.matrix(cm$byClass)) cm$byClass <- data.frame(t(cm$byClass))
   pr        <- cm$byClass[,c("Precision", "Recall")]
   f1        <- apply(pr, 1, function(i) .f1(pr = i['Precision'], re = i['Recall']))
   macro_f1  <- cbind(pr, "F1"=f1)
