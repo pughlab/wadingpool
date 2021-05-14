@@ -12,6 +12,7 @@
 #' @param is.sim Boolean flag for whether data is simulation or not (Default=FALSE)
 #' @param ret.raw Boolean flag to return the fitted model depmixS4 object
 #' @param nstart Number of starts to try out for EM (Default=10)
+#' @param multi Boolean whether to use depmixs4::multistart for fitting model
 #'
 #' @importFrom depmixS4 depmix
 #' @importFrom depmixS4 fit
@@ -31,7 +32,10 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(),
   diag(trstart) <- runif(n = states, min=0.7, max=0.9)  # Non-changing states
   if(family$family == 'gaussian'){
     # gaussians centered around 0, separated by 0.5, sd=0.1
-    respstart <- seq(0.5, states*0.5, by=0.5)
+    obs_range   <- round(diff(quantile(het_cnt[,sample], c(0.25, 0.75))),1)
+    obs_spread  <- round(obs_range/states,2)
+    respstart <- cumsum(rep(obs_spread, states))
+    # respstart <- seq(0.5, states*0.5, by=0.5)
     respstart <- as.vector(rbind(respstart - median(respstart), rep(0.1, states)))
   }
   
