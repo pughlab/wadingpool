@@ -13,3 +13,9 @@
   assert_that(is.character(m[,x[2]]), 
               msg="est_cols[2] must correspond to a character label for each state")
 }
+
+#################################
+#### dataProcessing.parseSeg ####
+.chk_seg <- function(seg, st_end, event){
+  
+}

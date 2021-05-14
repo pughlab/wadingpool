@@ -16,8 +16,8 @@
 #' simulate(100, cnts=setNames(c(10, 20), c('loh', 'het')), 
 #'          switch.prob=0.05, family='poisson')
 simulate <- function(N, cnts=c('loh'=10, 'het'=15), switch.prob = 0.10, family='poisson'){
-  switch.val <- 100 * round(switch.prob, 2)
-  rand.val <- sample(1:100, N, replace = T)
+  switch.val <- 10000 * round(switch.prob, 5)
+  rand.val <- sample(1:10000, N, replace = T)
   sim_cnts <- switch(family,
                      poisson=lapply(cnts, function(cnt) rpois(N,cnt)),
                      gaussian=lapply(cnts, function(cnt) rnorm(n=N, mean=cnt, sd=sqrt(cnt))))
@@ -65,4 +65,58 @@ sanitizeData <- function(x){
   x <- log(x / median(x))
   x <- Winsorize(x, probs=c(0.01, 0.99))
   return(x)
+}
+
+
+#' Parse CN seg files
+#' @description Parses a seg file with given chromosome-separated
+#' intervals and a discrete CN state. It will identify the number of
+#' states occupying `state_frac` of the genome, where each interval
+#' is of at least `min_frac` in size.
+#' 
+#' @param segf path to CN seg file
+#' @param segcol character: column name for discrete CN state
+#' @param start character: column name for interval start
+#' @param end character: column name for interval end
+#' @param state_frac numeric: minimal fraction of the genome occupied by CN states (default=0.90)
+#' @param min_frac numeric: minimum segment size in fractions (default=0.05)
+#' @param get_tt boolean: retain a transition state probability matrix (in.dev)
+#'
+#' @importFrom assertthat assert_that
+#' @return
+#' A one or two element list:
+#'   'state': integer number of states
+#'   'tt': transition matrix
+#' @export
+parseSeg <- function(segf, segcol='event', start='start', end='end', 
+                     state_frac=0.9, min_frac=0.05, get_tt=FALSE){
+  # segf <- 'net-001a.seg'
+  assert_that(file.exists(segf), msg="Seg file does not exist")
+  seg <- read.table(segf, header = TRUE, sep="\t", stringsAsFactors = FALSE, check.names = FALSE)
+  # .chk_seg(seg, st_end=c(start, end), event=segcol)    # to be implemented
+  
+  # Get genomic size of all events
+  seg$width   <- seg[,end] - seg[,start]
+  segl_width  <- split(seg$width, seg[,segcol])
+  seg_frac    <- sapply(segl_width, sum)/sum(seg$width)
+  
+  # Identify number of states that occupy f=`state_frac` of the genome
+  small_segs  <- which(seg_frac < min_frac)
+  max_frac    <- sum(seg_frac[-small_segs])  # max for all states > `min_frac`
+  cumseg      <- cumsum(sort(seg_frac[-small_segs], decreasing = T))      # cumu
+  state_cut   <- which(diff(cumseg > state_frac) == 1) + 1
+  
+  # Estimate transition prob
+  ## tileGenome() to split the genome in the same way as hetCnts
+  ## findOverlap() to overlap seg and tiles
+  ## Generate expected transition matrix 
+  ### tt <- table(x[-length(x)], x[-1])
+  ### tt <- tt / rowSums(tt)
+  
+  ret_obj <- list("states"=as.integer(state_cut))
+  if(get_tt){
+    stop(paste0("Obtaining the transition matrix has not been implemented yet"))
+    # ret_obj[['tt']] <- tt
+  }
+  return(ret_obj)
 }
