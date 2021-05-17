@@ -50,7 +50,9 @@ simulate <- function(N, cnts=c('loh'=10, 'het'=15), switch.prob = 0.10, family='
 #' Sanitize the data
 #' @description If data is distributed according to a poisson distribution, median normalize
 #' the data and log transform to make it more gaussian like
+#'
 #' @param x Numeric vector
+#' @param winsorize_p Numeric value for probabilty to winsorize at (Default = 0.01)
 #' 
 #' @importFrom DescTools Winsorize
 #' @importFrom stats median
@@ -61,9 +63,24 @@ simulate <- function(N, cnts=c('loh'=10, 'het'=15), switch.prob = 0.10, family='
 #'
 #' @examples
 #' sanitizeData(rpois(100, 10))
-sanitizeData <- function(x){
+sanitizeData <- function(x, winsorize_p=0.01){
   x <- log(x / median(x))
-  x <- Winsorize(x, probs=c(0.01, 0.99))
+  
+  ## Find minimum quantile that does not return an infinite value
+  lowq <- 0; highq <- 1
+  while(is.infinite(quantile(x, lowq))){
+    lowq <- lowq + 0.01
+  }
+  while(is.infinite(quantile(x, highq))){
+    highq <- highq - 0.01
+  }
+  q <- max(c(winsorize_p, lowq, 1-highq))
+  if(q > winsorize_p){
+    warning(paste0("Winsorize value of ", winsorize_p, " returns an infinite value, defaulting \n",
+                 "to ", q, " which will return the next best winsorization probability"))
+  }
+  
+  x <- Winsorize(x, probs=c(q, 1-q))
   return(x)
 }
 
@@ -119,4 +136,26 @@ parseSeg <- function(segf, segcol='event', start='start', end='end',
     # ret_obj[['tt']] <- tt
   }
   return(ret_obj)
+}
+
+#' GRanges to Bed
+#' @description simple function to convert a GRanges object to a data
+#' frame in .bed file format
+#' @param gr GRanges object
+#' @importFrom GenomeInfoDb seqnames
+#' @importFrom GenomicRanges start
+#' @importFrom GenomicRanges end
+#' @importFrom GenomicRanges strand
+#' 
+#' @return
+#' Dataframe
+#' @export
+toBed <- function(gr){
+  df <- data.frame(chrom=seqnames(gr),
+                   chromStart=as.integer(start(gr)),
+                   chromEnd=as.integer(end(gr)),
+                   name=paste0("bin", c(1:length(gr))),
+                   score=c(rep(".", length(gr))),
+                   strand=strand(gr))
+  return(df)
 }

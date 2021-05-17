@@ -68,7 +68,7 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(),
     est.states$chrom <- as.character(seqnames(tiles)) #as.character(seqnames(tiles[as.integer(names(ov_spl)),]))
     est.states$bin <- names(tiles) #names(tiles[as.integer(names(ov_spl)),])
   } else {
-    est.states$chrom <- paste0("chrom", sort(rep(1:22, 200)))[1:nrow(est.states)]
+    est.states$chrom <- paste0("chr", sort(rep(1:22, 200)))[1:nrow(est.states)]
     est.states$bin <- paste0("bin", c(1:nrow(est.states)))
   }
   
@@ -79,9 +79,9 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(),
                                act_cols = c('act.state', 'act.state.label'))
   }
   
-  ret_obj <- est.states$model
+  ret_obj <- est.states
   if(ret.raw){
-    ret_obj <- list("df"=est.states$model, "model"=fit.mod)
+    ret_obj <- list("df"=est.states, "model"=fit.mod)
     # metrics(ret_obj$df$state.label, ret_obj$df$act.state.label)$micro$F1
     # metrics(ret_obj$df$state.label, ret_obj$df$act.state.label)
     # summary(ret_obj$model)
@@ -105,6 +105,7 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(),
 .genStateMap <- function(model, est_cols, act_cols=NULL){
   uniq_map <- unique(model[,est_cols])
   uniq_map <- uniq_map[order(uniq_map[,est_cols[2]]),]
+  ret_obj <- list("map"=uniq_map, "model"=model)
   
   if(!is.null(act_cols)){
     # Re-assign the "Actual" state - state_label mapping to be concordant with the 
@@ -133,6 +134,7 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(),
     if(!all(unique(model[,act_cols[2]]) %in% uniq_map[,2])) warning("Actual labels do not match the estimated labels")
     assert_that(!any(is.na(uniq_map_act[,1])), !any(is.na(uniq_map[,1])),
                 msg="Unmapped states in estimated or actual states")
+    ret_obj[['act.map']] <- uniq_map_act
   }
-  return(list("map"=uniq_map, "model"=model, "act.map"=uniq_map_act))
+  return(ret_obj)
 }

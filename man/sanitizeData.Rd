@@ -4,10 +4,12 @@
 \alias{sanitizeData}
 \title{Sanitize the data}
 \usage{
-sanitizeData(x)
+sanitizeData(x, winsorize_p = 0.01)
 }
 \arguments{
 \item{x}{Numeric vector}
+
+\item{winsorize_p}{Numeric value for probabilty to winsorize at (Default = 0.01)}
 }
 \value{
 Numeric vector of median normalized x in log space, followed by a 0.01,0.099 winsorization

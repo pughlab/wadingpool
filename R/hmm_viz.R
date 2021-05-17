@@ -62,15 +62,15 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
     idxs <- .getChrIdx(model)
     
     (ggplot(model, aes_string(x = xval, y = est_cols[1], fill = est_cols[2], col = est_cols[2])) + 
-       geom_bar(stat = "identity", alpha = I(0.7), size=0) + 
-       geom_vline(xintercept = idxs$chrs, size=1.5, colour='grey') +
-       theme_classic() +
-       scale_fill_manual(values = mycols, name = "State:", labels = labels) +
-       scale_color_manual(values = mycols, name = "State:", labels = labels) +
-       theme(axis.ticks = element_blank(), axis.text.y = element_blank()) +
-       labs(y = paste0(typelab, " State")) +
-       scale_x_continuous(breaks=idxs$mids,
-                          labels=names(idxs$mids))) %>% ggplotGrob
+        geom_bar(stat = "identity", alpha = I(0.7), size=0) + 
+        geom_vline(xintercept = idxs$chrs, size=1.5, colour='grey') +
+        theme_classic() +
+        scale_fill_manual(values = mycols, name = "State:", labels = labels) +
+        scale_color_manual(values = mycols, name = "State:", labels = labels) +
+        theme(axis.ticks = element_blank(), axis.text.y = element_blank()) +
+        labs(y = paste0(typelab, " State")) +
+        scale_x_continuous(breaks=idxs$mids,
+                           labels=names(idxs$mids))) %>% ggplotGrob
   }
   gest <- .barplot_hmm(model, est_cols, typelab="Estimated", uniq_map[,est_cols[1]], idxs)
   if(known_actual) gact <- .barplot_hmm(model, act_cols, typelab="Actual", act_map[,act_cols[1]], idxs)
