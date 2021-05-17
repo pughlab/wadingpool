@@ -97,7 +97,8 @@ sanitizeData <- function(x, winsorize_p=0.01){
 #' @param end character: column name for interval end
 #' @param state_frac numeric: minimal fraction of the genome occupied by CN states (default=0.90)
 #' @param min_frac numeric: minimum segment size in fractions (default=0.05)
-#' @param get_tt boolean: retain a transition state probability matrix (in.dev)
+#' @param get_tt boolean: return a transition state probability matrix (in.dev)
+#' @param get_seg boolean: return the sef file parsed
 #'
 #' @importFrom assertthat assert_that
 #' @return
@@ -106,7 +107,7 @@ sanitizeData <- function(x, winsorize_p=0.01){
 #'   'tt': transition matrix
 #' @export
 parseSeg <- function(segf, segcol='event', start='start', end='end', 
-                     state_frac=0.9, min_frac=0.05, get_tt=FALSE){
+                     state_frac=0.9, min_frac=0.05, get_tt=FALSE, get_seg=FALSE){
   # segf <- 'net-001a.seg'
   assert_that(file.exists(segf), msg="Seg file does not exist")
   seg <- read.table(segf, header = TRUE, sep="\t", stringsAsFactors = FALSE, check.names = FALSE)
@@ -134,6 +135,8 @@ parseSeg <- function(segf, segcol='event', start='start', end='end',
   if(get_tt){
     stop(paste0("Obtaining the transition matrix has not been implemented yet"))
     # ret_obj[['tt']] <- tt
+  } else if(get_seg){
+    ret_obj[['seg']] <- seg
   }
   return(ret_obj)
 }

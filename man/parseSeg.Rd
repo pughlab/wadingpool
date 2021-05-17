@@ -11,7 +11,8 @@ parseSeg(
   end = "end",
   state_frac = 0.9,
   min_frac = 0.05,
-  get_tt = FALSE
+  get_tt = FALSE,
+  get_seg = FALSE
 )
 }
 \arguments{
@@ -27,7 +28,9 @@ parseSeg(
 
 \item{min_frac}{numeric: minimum segment size in fractions (default=0.05)}
 
-\item{get_tt}{boolean: retain a transition state probability matrix (in.dev)}
+\item{get_tt}{boolean: return a transition state probability matrix (in.dev)}
+
+\item{get_seg}{boolean: return the sef file parsed}
 }
 \value{
 A one or two element list:
