@@ -40,7 +40,7 @@ fitHMM <- function(sample, het_cnt, states=2, family=poisson(),
   }
   
 
-  mod <- depmix(as.formula(paste0(sample, '~ 1')), data = as.data.frame(het_cnt), 
+  mod <- depmix(as.formula(paste0('`', sample, '` ~ 1')), data = as.data.frame(het_cnt), 
                 nstates=states, family=family, trstart = unlist(trstart), respstart = unlist(respstart))
   # 
   fit.mod <- tryCatch({
