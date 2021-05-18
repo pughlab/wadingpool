@@ -183,14 +183,13 @@ combZygPos <- function(zyg, zygpos, ret='reduced'){
   # Uncollapsed data
   seg <- zygpos[zyg$bin]
   mcols(seg) <- zyg
-  print(head(seg))
   
   # Collapsed seg states
   if(ret=='reduced'){
     splseg <- split(seg, seg$state.label)
-    print(length(splseg))
-    print(splseg)
-    seg <- unlist(IRanges::reduce(splseg))
+    splseg <- unlist(lapply(splseg, IRanges::reduce))
+    seg <- unlist(as(splseg, "GRangesList"))
+    # seg <- unlist(IRanges::reduce(splseg))
     seg <- sort(seg)
     seg$state <- names(seg)
   }
