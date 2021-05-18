@@ -171,7 +171,7 @@ toBed <- function(gr){
 #' @param zygpos GRanges object that corresponds with zyg
 #' @param ret return 'reduced' or a 'raw' state (bins or segments)
 #' @importFrom S4Vectors mcols<-
-#' @importFrom purrr reduce
+#' @importFrom IRanges reduce
 #' @return 
 #' A GRanges object that maps zygpos to zyg
 #' @export
