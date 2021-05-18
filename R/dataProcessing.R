@@ -187,7 +187,10 @@ combZygPos <- function(zyg, zygpos, ret='reduced'){
   
   # Collapsed seg states
   if(ret=='reduced'){
-    seg <- unlist(IRanges::reduce(split(seg, seg$state.label)))
+    splseg <- split(seg, seg$state.label)
+    print(length(splseg))
+    print(splseg)
+    seg <- unlist(IRanges::reduce(splseg))
     seg <- sort(seg)
     seg$state <- names(seg)
   }
