@@ -170,7 +170,7 @@ toBed <- function(gr){
 #' @param zyg data.frame object returned from fitHMM()$df
 #' @param zygpos GRanges object that corresponds with zyg
 #' @param ret return 'reduced' or a 'raw' state (bins or segments)
-#' @importFrom S4Vectors mcols
+#' @importFrom S4Vectors mcols<-
 #' @importFrom purrr reduce
 #' @return 
 #' A GRanges object that maps zygpos to zyg
