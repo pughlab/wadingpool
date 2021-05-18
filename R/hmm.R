@@ -28,10 +28,10 @@
 #' @export
 fitHMM <- function(sample, het_cnt, states=2, family=poisson(), 
                    nstart=10, tiles=NULL, is.sim=FALSE, ret.raw=FALSE,
-                   multi=FALSE, tr_same=c(0,0.2), tr_switch=c(0.9, 0.95)){
+                   multi=FALSE, tr_switch=c(0,0.2), tr_same=c(0.9, 0.95)){
   # Set base transition and emission expectations
-  trstart <- matrix(runif(states^2, min=tr_same[1], max=tr_same[2]), ncol=states)
-  diag(trstart) <- runif(n = states, min=tr_switch[1], max=tr_switch[2])  # Non-changing states
+  trstart <- matrix(runif(states^2, min=tr_switch[1], max=tr_switch[2]), ncol=states)
+  diag(trstart) <- runif(n = states, min=tr_same[1], max=tr_same[2])  # Non-changing states
   if(family$family == 'gaussian'){
     # gaussians centered around 0, separated by 0.5, sd=0.1
     obs_range   <- round(diff(quantile(het_cnt[,sample], c(0.25, 0.75))),1)
