@@ -38,10 +38,10 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
   mycols          <- mycols[1:num_uniq_states]
   
   # Identify the chromosome transition points
-  idxs <- WadingPool:::.getChrIdx(model)
+  idxs <- .getChrIdx(model)
   
   # Attributing state to state-label
-  state_map <- WadingPool:::.genStateMap(model, est_cols, act_cols)
+  state_map <- .genStateMap(model, est_cols, act_cols)
   uniq_map  <- state_map[['map']]
   act_map   <- state_map[['act.map']]
   model     <- state_map[['model']]
