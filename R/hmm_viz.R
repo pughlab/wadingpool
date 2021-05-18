@@ -23,8 +23,9 @@
 #' @export
 plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
   known_actual <- if(!is.null(act_cols)) TRUE else FALSE
-  mycols <- c("#1b9e77", "#7570b3", "#d95f02",
-              "#e7298a", "#66a61e", "#e6ab02")
+  mycols <- c("#d73027",  
+              "#7fcdbb", "#41b6c4", "#1d91c0",
+              "#225ea8", "#253494", "#081d58") #red, blue1, blue2, blue3...
   # Ensure the standards of est_cols
   .check(est_cols, 'plotHMM.est_cols', m=model)
   if(known_actual) .check(act_cols, 'plotHMM.est_cols', m=model)
@@ -37,10 +38,10 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
   mycols          <- mycols[1:num_uniq_states]
   
   # Identify the chromosome transition points
-  idxs <- .getChrIdx(model)
+  idxs <- WadingPool:::.getChrIdx(model)
   
   # Attributing state to state-label
-  state_map <- .genStateMap(model, est_cols, act_cols)
+  state_map <- WadingPool:::.genStateMap(model, est_cols, act_cols)
   uniq_map  <- state_map[['map']]
   act_map   <- state_map[['act.map']]
   model     <- state_map[['model']]
@@ -49,13 +50,16 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
   # Plot observed Het cnts
   gobs <- (ggplot(model, aes_string(x = xval, y = 'obs')) + 
              geom_line() +
-             geom_vline(xintercept = idxs$chrs, size=1.5, colour='grey') +
+             geom_vline(xintercept = model[idxs$chrs, xval], size=1, colour='grey') +
              theme_classic() +
-             lims(y=c(-2.5,2.5)) +
+             lims(y=c(-3,3)) +
              theme(axis.ticks = element_blank(), 
                    axis.title.y = element_blank()) +
-             scale_x_continuous(breaks=idxs$mids,
+             scale_x_continuous(breaks=model[idxs$mids, xval],
                                 labels=names(idxs$mids))) %>% ggplotGrob
+  pdf("~/test.pdf")
+  grid.arrange(gobs)
+  dev.off()
   
   # Barplot of different states (actual or estimated)
   .barplot_hmm <- function(model, est_cols, typelab="Estimated", labels, idxs){
@@ -63,13 +67,13 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
     
     (ggplot(model, aes_string(x = xval, y = est_cols[1], fill = est_cols[2], col = est_cols[2])) + 
         geom_bar(stat = "identity", alpha = I(0.7), size=0) + 
-        geom_vline(xintercept = idxs$chrs, size=1.5, colour='grey') +
+        geom_vline(xintercept = model[idxs$chrs, xval], size=1.5, colour='grey') +
         theme_classic() +
         scale_fill_manual(values = mycols, name = "State:", labels = labels) +
         scale_color_manual(values = mycols, name = "State:", labels = labels) +
         theme(axis.ticks = element_blank(), axis.text.y = element_blank()) +
         labs(y = paste0(typelab, " State")) +
-        scale_x_continuous(breaks=idxs$mids,
+        scale_x_continuous(breaks=model[idxs$mids, xval],
                            labels=names(idxs$mids))) %>% ggplotGrob
   }
   gest <- .barplot_hmm(model, est_cols, typelab="Estimated", uniq_map[,est_cols[1]], idxs)
@@ -80,13 +84,13 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
                      id = c(xval, 'chrom'))
   gpp <- (ggplot(melt_model, aes_string(x = xval, y = 'value', col = 'variable')) + 
             geom_line() +
-            geom_vline(xintercept = idxs$chrs, size=1.5, colour='grey') +
+            geom_vline(xintercept = model[idxs$chrs, xval], size=1.5, colour='grey') +
             theme_classic() +
             lims(y=c(0,1)) +
             scale_color_manual(values = mycols, name = "State:", labels = uniq_map[,est_cols[1]]) +
             theme(axis.ticks = element_blank(), axis.text.y = element_blank()) + 
             labs(y = "Posterior Prob.") +
-            scale_x_continuous(breaks=idxs$mids,
+            scale_x_continuous(breaks=model[idxs$mids, xval],
                                labels=names(idxs$mids))) %>%
     ggplotGrob()
   

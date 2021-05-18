@@ -14,8 +14,8 @@ fitHMM(
   is.sim = FALSE,
   ret.raw = FALSE,
   multi = FALSE,
-  tr_same = c(0, 0.2),
-  tr_switch = c(0.9, 0.95)
+  tr_switch = c(0, 0.2),
+  tr_same = c(0.9, 0.95)
 )
 }
 \arguments{
@@ -38,9 +38,9 @@ will fill in the genomic poisition randomly (Default=NULL)}
 
 \item{multi}{Boolean whether to use depmixs4::multistart for fitting model}
 
-\item{tr_same}{numeric vector length 2: min/max probabilty range of transition to same state}
-
 \item{tr_switch}{numeric vector length 2: min/max probabilty range of transition to different state}
+
+\item{tr_same}{numeric vector length 2: min/max probabilty range of transition to same state}
 }
 \value{
 Dataframe containing the emission proabbility for each state and a fitted HMM
