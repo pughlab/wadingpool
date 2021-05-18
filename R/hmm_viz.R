@@ -37,6 +37,14 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
   stopifnot(length(mycols) >= num_uniq_states)
   mycols          <- mycols[1:num_uniq_states]
   
+  # Factorize state labels for coloring
+  uniqcol <- length(unique(model[,est_cols[1]]))
+  model[,est_cols[2]] <- factor(model[,est_cols[2]], levels=c("LOH", paste0("H", c(1:(uniqcol-1)))))
+  if(!is.null(act_cols)){
+    uniqcol <- length(unique(model[,act_cols[1]]))
+    model[,act_cols[2]] <- factor(model[,act_cols[2]], levels=c("LOH", paste0("H", c(1:(uniqcol-1)))))
+  }
+  
   # Identify the chromosome transition points
   idxs <- .getChrIdx(model)
   
