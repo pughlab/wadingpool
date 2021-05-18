@@ -171,6 +171,7 @@ toBed <- function(gr){
 #' @param zygpos GRanges object that corresponds with zyg
 #' @param ret return 'reduced' or a 'raw' state (bins or segments)
 #' @importFrom S4Vectors mcols<-
+#' @importFrom S4Vectors mcols
 #' @importFrom IRanges reduce
 #' @return 
 #' A GRanges object that maps zygpos to zyg
@@ -182,6 +183,7 @@ combZygPos <- function(zyg, zygpos, ret='reduced'){
   # Uncollapsed data
   seg <- zygpos[zyg$bin]
   mcols(seg) <- zyg
+  print(head(seg))
   
   # Collapsed seg states
   if(ret=='reduced'){
