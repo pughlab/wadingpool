@@ -57,9 +57,6 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
                    axis.title.y = element_blank()) +
              scale_x_continuous(breaks=model[idxs$mids, xval],
                                 labels=names(idxs$mids))) %>% ggplotGrob
-  pdf("~/test.pdf")
-  grid.arrange(gobs)
-  dev.off()
   
   # Barplot of different states (actual or estimated)
   .barplot_hmm <- function(model, est_cols, typelab="Estimated", labels, idxs){
