@@ -13,6 +13,8 @@
 #' @param ret.raw Boolean flag to return the fitted model depmixS4 object
 #' @param nstart Number of starts to try out for EM (Default=10)
 #' @param multi Boolean whether to use depmixs4::multistart for fitting model
+#' @param tr_same numeric vector length 2: min/max probabilty range of transition to same state
+#' @param tr_switch numeric vector length 2: min/max probabilty range of transition to different state
 #'
 #' @importFrom depmixS4 depmix
 #' @importFrom depmixS4 fit
@@ -26,10 +28,10 @@
 #' @export
 fitHMM <- function(sample, het_cnt, states=2, family=poisson(), 
                    nstart=10, tiles=NULL, is.sim=FALSE, ret.raw=FALSE,
-                   multi=FALSE){
+                   multi=FALSE, tr_same=c(0,0.2), tr_switch=c(0.9, 0.95)){
   # Set base transition and emission expectations
-  trstart <- matrix(runif(states^2, min=0, max=0.4), ncol=states)
-  diag(trstart) <- runif(n = states, min=0.7, max=0.9)  # Non-changing states
+  trstart <- matrix(runif(states^2, min=tr_same[1], max=tr_same[2]), ncol=states)
+  diag(trstart) <- runif(n = states, min=tr_switch[1], max=tr_switch[2])  # Non-changing states
   if(family$family == 'gaussian'){
     # gaussians centered around 0, separated by 0.5, sd=0.1
     obs_range   <- round(diff(quantile(het_cnt[,sample], c(0.25, 0.75))),1)

@@ -32,6 +32,7 @@ usethis::use_package("reshape2")
 usethis::use_package("gridExtra")
 usethis::use_package("depmixS4")
 usethis::use_package("caret")
+usethis::use_package("purrr")
 
 
 devtools::load_all()

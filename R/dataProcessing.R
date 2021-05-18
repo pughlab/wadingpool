@@ -162,3 +162,32 @@ toBed <- function(gr){
                    strand=strand(gr))
   return(df)
 }
+
+
+#' Zygosity combiner helper
+#' @description Combines the zygosity data with the zygosity
+#' position
+#' @param zyg data.frame object returned from fitHMM()$df
+#' @param zygpos GRanges object that corresponds with zyg
+#' @param ret return 'reduced' or a 'raw' state (bins or segments)
+#' @importFrom S4Vectors mcols
+#' @importFrom purrr reduce
+#' @return 
+#' A GRanges object that maps zygpos to zyg
+#' @export
+combZygPos <- function(zyg, zygpos, ret='reduced'){
+  # zyg <- hmm1$df
+  # zygpos <- tiles_ov
+  
+  # Uncollapsed data
+  seg <- zygpos[zyg$bin]
+  mcols(seg) <- zyg
+  
+  # Collapsed seg states
+  if(ret=='reduced'){
+    seg <- unlist(reduce(split(seg, ~state.label)))
+    seg <- sort(seg)
+    seg$state <- names(seg)
+  }
+  return(seg)
+}

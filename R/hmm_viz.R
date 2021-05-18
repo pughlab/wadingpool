@@ -98,6 +98,101 @@ plotHMM <- function(model, est_cols, act_cols=NULL, xval='bin'){
   }
 }
 
+#' Cn-Zyg plotter
+#' @description Plots the zygosity and cn state
+#'
+#' @param cn GRanges object with a discrete integer cncol column
+#' @param zyg GRanges object with a discrete 'state' column of c('LOH', 'H1', etc...)
+#' @param tiles Reference GRanges object from tileGenome()
+#' @param cncol character: copy number column for cn GRanges object
+#' @param ... pass in for plot()
+#'
+#' @importFrom S4Vectors queryHits
+#' @importFrom S4Vectors subjectHits
+#' @importFrom S4Vectors mcols
+#' @importFrom GenomicRanges findOverlaps
+#' @importFrom graphics plot
+#' @importFrom graphics rect
+#' @importFrom graphics abline
+#' @importFrom graphics axis
+#' 
+#' @return
+#' data frame containing the segment-level CN and zygosity state
+#' 
+#' @export
+plotCnZyg <- function(cn, zyg, tiles, cncol='copy.number', ...){
+  # cn <- segs[['net-001a']]
+  # zyg <- combZygPos(zyg=hmm1$df, zygpos=tiles_ov)
+  # cncol <- 'copy.number'
+  mycols <- c("darkgrey", "#d73027",  
+              "#7fcdbb", "#41b6c4", "#1d91c0",
+              "#225ea8", "#253494", "#081d58") #red, blue1, blue2, blue3...
+  
+  # For plotting, range of CN from 0 to maxCN
+  yrange <- c(0, max(mcols(cn)[,cncol]))
+  
+  # Initialize a blank genomic-positional data.frame for zygosity and CN to map to
+  cnzyg <- as.data.frame(matrix(nrow=length(tiles), ncol=2))
+  colnames(cnzyg) <- c('zyg', 'cn')
+  cnzyg$xpos <- c(1:length(tiles))
+  
+  # Map zygosity to the reference genomic bins (tiles)
+  ov <- findOverlaps(tiles, zyg, select='all')
+  if(any(duplicated(queryHits(ov)))) {
+    warning("Duplicates in overlap were found, the tiles genomic bins may not be
+            granular enough to capture all the data")
+    ov <- ov[-which(duplicated(queryHits(ov)))]
+  }
+  zygstat <- zyg[subjectHits(ov)]
+  zygstat <- factor(zygstat$state, levels=c("LOH", paste0("H", c(1:(length(table(zygstat$state))-1)))))
+  cnzyg[queryHits(ov),]$zyg <- zygstat
+  if(any(is.na(cnzyg$zyg))) cnzyg$zyg[is.na(cnzyg$zyg)] <- 0
+  
+  # Map CN to the reference genomic bins (tiles)
+  ov <- findOverlaps(tiles, cn)
+  if(any(duplicated(queryHits(ov)))) {
+    warning("Duplicates in overlap were found, the tiles genomic bins may not be
+            granular enough to capture all the data")
+    ov <- ov[-which(duplicated(queryHits(ov)))]
+  }
+  cnstat <- mcols(cn[subjectHits(ov)])[,cncol]
+  cnzyg[queryHits(ov),]$cn <- cnstat
+  
+  # Reduce bin level data to segment level cn/zyg states
+  cnzyg_simp <- rle(apply(cnzyg[,c('cn', 'zyg')], 1, paste, collapse="_"))
+  cnzyg_cum <- cumsum(c(0, cnzyg_simp$lengths))
+  cnzyg_simp <- do.call(rbind, strsplit(cnzyg_simp$values, "_"))
+  storage.mode(cnzyg_simp) <- 'integer'
+  
+  # Annotate the reduced seg with chr, start, end, binpos
+  cnzyg_red <- as.data.frame(cnzyg_simp)
+  colnames(cnzyg_red) <- c('cn', 'zyg')
+  cnzyg_red$sbin <- cnzyg[cnzyg_cum[-length(cnzyg_cum)]+1,'xpos']
+  cnzyg_red$ebin <- cnzyg[cnzyg_cum[-1],'xpos']
+  cnzyg_red$chr <- as.character(seqnames(tiles[cnzyg_red$sbin]))
+  cnzyg_red$start <- start(tiles[cnzyg_red$sbin])
+  cnzyg_red$end <- end(tiles[cnzyg_red$ebin])
+  
+  
+  # Plot the CN/Zyg data
+  chr_brk <- rle(as.character(seqnames(tiles)))
+  plot(0, type='n',
+       pch=16, ylim=yrange, xlim=c(0, length(tiles)), 
+       xlab = 'Chromosomes', ylab="Copy number", xaxt='n',
+       cex.lab=1,cex.axis=1, cex=0.7, las=1, ...)
+  rect(xleft = cnzyg_cum[-length(cnzyg_cum)], 
+       ybottom = (cnzyg_simp[-nrow(cnzyg_simp),1]-0.3), 
+       xright = cnzyg_cum[-1], 
+       ytop = (cnzyg_simp[-nrow(cnzyg_simp),1]+0.3), 
+       col=mycols[cnzyg_simp[,2]+1], border = NA)
+  abline(v = cumsum(chr_brk$length))
+  axis(side = 1, at = cumsum(chr_brk$length)-(chr_brk$length/2),
+       labels = gsub("chr", "", chr_brk$values, ignore.case = T), 
+       tick = FALSE, cex.axis=0.7)
+  
+  return(cnzyg_red)
+}
+
 
 # Identify the chromosome transition points
 .getChrIdx <- function(model){
