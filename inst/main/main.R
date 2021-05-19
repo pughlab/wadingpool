@@ -116,3 +116,6 @@ agg_results <- aggregateAndFilter(s_paths, num_samples=2, chrs=chrs,
 
 filt_dir <- file.path("tmp", "combined", "filt")
 getSampleSimilarity(filt_dir, samples)
+
+filt_dir <- '/mnt/work1/users/pughlab/bin/swgs/results/zygosity/AD'
+x <- getSampleSimilarity(filt_dir, c('net-001a', 'net-001b', 'net-002', 'net-037'), pattern="filt.csv$")

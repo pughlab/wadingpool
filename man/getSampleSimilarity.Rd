@@ -5,25 +5,28 @@
 \title{Generates a similarity matrix}
 \usage{
 getSampleSimilarity(
-  filt_dir,
+  sample_matrix,
   samples,
+  matchmode = "autosome",
   similarityFun = NULL,
-  pattern = "filt.snps$",
-  rm_nocov = FALSE
+  rm_nocov = FALSE,
+  rem_ref = TRUE
 )
 }
 \arguments{
-\item{filt_dir}{Path to directory containing [CHR]_filt.snps}
+\item{sample_matrix}{character: path to csv or vcf file to run similarity match on}
 
-\item{samples}{Sample vector corresponding to the column names of _filt.snps}
+\item{samples}{character: Comma-separated list of ordered samples for the matrix}
+
+\item{matchmode}{character: Either 'autosome' or 'chrM' (Default=autosome)}
 
 \item{similarityFun}{Similarity function with two parameters, 'i' and 'j'.}
 
-\item{pattern}{Pattern for the aggregate SNPs file (Default="filt.snps$")}
-
 \item{rm_nocov}{If no filtering process took place prior, setting this to TRUE
-will remove all SNPs where no sample have any coverage (Default=FALSE)
-If no similarity function is given, it default to a Jaccard metric}
+will remove all SNPs where no sample have any coverage (Default=FALSE)}
+
+\item{rem_ref}{boolean: Removes reference matches in chrM sample matching (0/0 and 
+0/0) (Default=TRUE)}
 }
 \value{
 Returns a list of similarity matrices, matrix of number of SNPs found between
