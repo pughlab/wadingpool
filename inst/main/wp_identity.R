@@ -36,14 +36,14 @@ sim_mats <- getSampleSimilarity(sample_matrix = sample, samples=ids, matchmode=m
 # Outputs
 ## PDF of matrix
 pdf(file.path(outdir, paste0("similarity_", mode, ".pdf")))
-plotSampleSimilarity(sim_mat = x$sim, n_mat = if(mode=='autosome') x$het else x$n, 
+plotSampleSimilarity(sim_mat = sim_mats$sim, n_mat = if(mode=='autosome') sim_mats$het else sim_mats$n, 
                      midpoint = midpoint, mid_diag=TRUE)
 dev.off()
 
 ## Written table of matrix
-write.table(round(x$sim,3), file = file.path(outdir, paste0("similarity_", mode, ".tsv")),
+write.table(round(sim_mats$sim,3), file = file.path(outdir, paste0("similarity_", mode, ".tsv")),
             row.names = TRUE, col.names = TRUE, sep = "\t")
 
-write.table(if(mode=='autosome') x$het else x$n, 
+write.table(if(mode=='autosome') sim_mats$het else sim_mats$n, 
             file = file.path(outdir, paste0("n_", mode, ".tsv")),
             row.names = TRUE, col.names = TRUE, sep = "\t")
