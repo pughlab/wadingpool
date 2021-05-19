@@ -28,18 +28,17 @@ getSampleSimilarity <- function(sample_matrix, samples, matchmode='autosome',
   ## Read in the VCF or CSV file
   mat <- switch(matchmode,
                 "autosome"={
-                  mat <- read.csv(sample_matrix, header = FALSE)
+                  mat <- read.csv(sample_matrix, header = TRUE)
                   if(!is.null(samples)) colnames(mat) <- strsplit(samples, ",")[[1]]
-                  return(mat)
+                  mat
                 },
                 "chrM"={
                   mega_vcf = read.csv(sample_matrix, sep = "\t", comment.char = "#")
                   mat = mega_vcf[,10:ncol(mega_vcf)]
                   if(!is.null(samples)) colnames(mat) <- strsplit(samples, ",")[[1]]
-                  return(mat)
+                  mat
                 },
                 stop("matchmode must be either 'autosome' or 'chrM'"))
-  storage.mode(mat) <- 'integer'
   
   ## Run the similarity checks
   mats <- switch(matchmode,
@@ -51,6 +50,10 @@ getSampleSimilarity <- function(sample_matrix, samples, matchmode='autosome',
 }
 
 .autosomeMatch <- function(mat, rm_nocov, similarityFun){
+  mat <- as.matrix(mat)
+  storage.mode(mat) <- 'integer'
+  mat <- as.data.frame(mat)
+  
   if(rm_nocov){
     # Removes SNPs where no samples have coverage for it
     mat[mat==0] <- NA         # Remove no coverage SNPs
@@ -93,6 +96,7 @@ getSampleSimilarity <- function(sample_matrix, samples, matchmode='autosome',
   # Parse haplotype caller into the first column (i.e. 0/0, or 1/1, or 0/1).
   sample_geno <- apply(mat, 2, .getGT)
   sample_count <- .cleanGenotype(as.matrix(sample_geno))
+  colnames(sample_count) <- colnames(mat)
   
   ## Read all the samples and count the genotypes####
   if(is.null(similarityFun)){
@@ -107,7 +111,8 @@ getSampleSimilarity <- function(sample_matrix, samples, matchmode='autosome',
       m <- sum(i[comp_idx] == j[comp_idx])
       n <- length(comp_idx)
       jacc <- sum(m)/n
-      return(c(jacc,n))
+      jacc
+      # return(c(jacc,n))
     }
   }
   getN <- function(i,j){ 
@@ -122,9 +127,6 @@ getSampleSimilarity <- function(sample_matrix, samples, matchmode='autosome',
 
   jacc_mat  <- allbyall(sample_count, margin=2, fun=similarityFun)
   n_mat     <- allbyall(sample_count, margin=2, fun=getN)
-  
-  colnames(jacc_mat)  <- rownames(jacc_mat) <- colnames(mat)
-  colnames(n_mat)     <- rownames(n_mat)    <- colnames(mat)
   
   list("sim"=jacc_mat,
        "n"=n_mat)
