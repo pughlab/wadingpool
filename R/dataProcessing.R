@@ -173,7 +173,6 @@ toBed <- function(gr){
 #' @importFrom S4Vectors mcols<-
 #' @importFrom S4Vectors mcols
 #' @importFrom IRanges reduce
-#' @importFrom methods as
 #' @return 
 #' A GRanges object that maps zygpos to zyg
 #' @export

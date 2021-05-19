@@ -49,6 +49,35 @@ getSampleSimilarity <- function(sample_matrix, samples, matchmode='autosome',
   return(mats)
 }
 
+
+#' Sim-N plotter
+#' @description Plot the similarity and n-matrix 
+#' 
+#' @param sim_mat Similarity matrix 
+#' @param n_mat Matrix of N's, same size and format as sim_mat
+#' @param midpoint Midpoint value of colour range (Default=0.5)
+#' @import ggplot2 
+#' @importFrom reshape2 melt
+#' @export
+plotSampleSimilarity <- function(sim_mat, n_mat, midpoint=0.5){
+  # Order the matrix based on hclusts
+  cl <- hclust(dist(sim_mat))
+  
+  # Melt and combine similarity and n-matrices
+  m_sim   <- melt(sim_mat[cl$order,cl$order])
+  m_n      <- melt(n_mat[cl$order,cl$order])
+  m_sim_n <- merge(m_sim, m_n, by=c('Var1', 'Var2'))
+  colnames(m_sim_n) <- c('Var1', 'Var2', 'similarity', 'n')
+  
+  # Heatmap visualization of two-factor clustered matrix
+  ggplot(m_sim, aes_string(y=factor('Var1'), x=factor('Var2'))) +
+    geom_point(aes_string(colour='similarity', size='n')) +
+    scale_color_gradient2(low='blue', mid='gray', high='red',
+                          midpoint=midpoint) +
+    theme_bw()
+}
+
+
 .autosomeMatch <- function(mat, rm_nocov, similarityFun){
   mat <- as.matrix(mat)
   storage.mode(mat) <- 'integer'
