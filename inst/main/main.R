@@ -118,7 +118,13 @@ filt_dir <- file.path("tmp", "combined", "filt")
 getSampleSimilarity(filt_dir, samples)
 
 sample <- '/mnt/work1/users/pughlab/bin/swgs/results/zygosity/AD/aggregate_filt.csv'
-x <- getSampleSimilarity(sample_matrix = sample, matchmode='autosome')
+x <- getSampleSimilarity(sample_matrix = sample, samples=NULL, 
+                         matchmode='autosome')
+
+pdf("~/test.pdf")
+plotSampleSimilarity(sim_mat = x$sim, n_mat = x$het, midpoint = 0.5)
+dev.off()
+
 
 sample <- '/mnt/work1/users/pughlab/bin/swgs/results/sampleid/chrM/merge.vcf'
 x <- getSampleSimilarity(sample_matrix = sample, 

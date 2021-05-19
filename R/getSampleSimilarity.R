@@ -21,7 +21,7 @@
 #' Returns a list of similarity matrices, matrix of number of SNPs found between
 #' two samples, and a matrix of number of heterozygous SNPs between two samples
 #' @export
-getSampleSimilarity <- function(sample_matrix, samples, matchmode='autosome',
+getSampleSimilarity <- function(sample_matrix, samples=NULL, matchmode='autosome',
                        similarityFun=NULL, rm_nocov=FALSE, rem_ref=TRUE){
   assert_that(file.exists(sample_matrix), msg="sample_matrix must be a file path containing the samples to match")
   
@@ -55,13 +55,20 @@ getSampleSimilarity <- function(sample_matrix, samples, matchmode='autosome',
 #' 
 #' @param sim_mat Similarity matrix 
 #' @param n_mat Matrix of N's, same size and format as sim_mat
+#' @param mid_diag boolean: Set diagonal of similarity matrix to midpoint (Default=FALSE)
 #' @param midpoint Midpoint value of colour range (Default=0.5)
+#'
 #' @import ggplot2 
 #' @importFrom reshape2 melt
 #' @export
-plotSampleSimilarity <- function(sim_mat, n_mat, midpoint=0.5){
+plotSampleSimilarity <- function(sim_mat, n_mat, midpoint=0.5, mid_diag=FALSE){
   # Order the matrix based on hclusts
   cl <- hclust(dist(sim_mat))
+  
+  # Remove the sim=1 of intersects by setting to midpoint
+  if(mid_diag){
+    diag(sim_mat) <- midpoint
+  }
   
   # Melt and combine similarity and n-matrices
   m_sim   <- melt(sim_mat[cl$order,cl$order])

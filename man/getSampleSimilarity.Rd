@@ -6,7 +6,7 @@
 \usage{
 getSampleSimilarity(
   sample_matrix,
-  samples,
+  samples = NULL,
   matchmode = "autosome",
   similarityFun = NULL,
   rm_nocov = FALSE,
