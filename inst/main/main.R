@@ -124,3 +124,6 @@ sample <- '/mnt/work1/users/pughlab/bin/swgs/results/sampleid/chrM/merge.vcf'
 x <- getSampleSimilarity(sample_matrix = sample, 
                          samples=c('net-001a,net-001b,net-002,net-037'), 
                          matchmode='chrM')
+pdf("~/test.pdf")
+plotSampleSimilarity(sim_mat = x$sim, n_mat = x$n, midpoint = 0.5)
+dev.off()

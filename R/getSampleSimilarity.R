@@ -68,9 +68,11 @@ plotSampleSimilarity <- function(sim_mat, n_mat, midpoint=0.5){
   m_n      <- melt(n_mat[cl$order,cl$order])
   m_sim_n <- merge(m_sim, m_n, by=c('Var1', 'Var2'))
   colnames(m_sim_n) <- c('Var1', 'Var2', 'similarity', 'n')
+  m_sim_n$Var1 <- factor(m_sim_n$Var1)
+  m_sim_n$Var2 <- factor(m_sim_n$Var2)
   
   # Heatmap visualization of two-factor clustered matrix
-  ggplot(m_sim, aes_string(y=factor('Var1'), x=factor('Var2'))) +
+  ggplot(m_sim_n, aes_string(y='Var1', x='Var2')) +
     geom_point(aes_string(colour='similarity', size='n')) +
     scale_color_gradient2(low='blue', mid='gray', high='red',
                           midpoint=midpoint) +
