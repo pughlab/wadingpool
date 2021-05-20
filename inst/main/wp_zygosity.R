@@ -1,15 +1,14 @@
 # devtools::install_github("quevedor2/WadingPool", ref = "dev")
 suppressPackageStartupMessages(library(optparse))
-
-library(WadingPool)
-library(GenomicRanges)
+suppressPackageStartupMessages(library(WadingPool))
+suppressPackageStartupMessages(library(GenomicRanges))
 
 ####################
 #### Parameters ####
 option_list <- list(
   make_option(c("-p", "--hetposf"), type="character", default='results/zygosity/AD/aggregate_pos.txt',
               help="File containing genomic position of heterozygous SNPs [default=%default]"),
-  make_option(c("-h", "--hetf"), type="character", default='results/zygosity/AD/aggregate_filt.csv',
+  make_option(c("-f", "--hetf"), type="character", default='results/zygosity/AD/aggregate_filt.csv',
               help="File containing counts for heterozygous SNPs [default=%default]"),
   make_option(c("-c", "--cnpath"), type="character", default='results/cnv/ichorcna',
               help="Path to directory containing copy-number seg files [default=%default]"),
@@ -38,11 +37,11 @@ chrs     <- paste0("chr", c(1:22,"X", "Y"))
 if(model=='hg19'){
   library(BSgenome.Hsapiens.UCSC.hg19)
   genome <- BSgenome.Hsapiens.UCSC.hg19
-} else(model=='hg38'){
+} else if(model=='hg38'){
   stop("Not tested")
   library(BSgenome.Hsapiens.UCSC.hg38)
   genome <- BSgenome.Hsapiens.UCSC.hg38
-} else(model=='mm10'){
+} else if(model=='mm10'){
   stop("Not tested")
   library(BSgenome.Mmusculus.UCSC.mm10)
   genome <- BSgenome.Mmusculus.UCSC.mm10
@@ -61,7 +60,7 @@ grpos <- makeGRangesFromDataFrame(pos)
 rm(pos)
 
 # Read in Het-Cnt data
-ad <- read.csv(hetcnt_f, header=TRUE)
+ad <- read.csv(hetcnt_f, header=TRUE, check.names = FALSE)
 
 # Bin the Het-Cnt data
 ov <- findOverlaps(tiles, grpos)

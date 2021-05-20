@@ -4,7 +4,7 @@
 \alias{plotSampleSimilarity}
 \title{Sim-N plotter}
 \usage{
-plotSampleSimilarity(sim_mat, n_mat, midpoint = 0.5)
+plotSampleSimilarity(sim_mat, n_mat, midpoint = 0.5, mid_diag = FALSE)
 }
 \arguments{
 \item{sim_mat}{Similarity matrix}
@@ -12,6 +12,8 @@ plotSampleSimilarity(sim_mat, n_mat, midpoint = 0.5)
 \item{n_mat}{Matrix of N's, same size and format as sim_mat}
 
 \item{midpoint}{Midpoint value of colour range (Default=0.5)}
+
+\item{mid_diag}{boolean: Set diagonal of similarity matrix to midpoint (Default=FALSE)}
 }
 \description{
 Plot the similarity and n-matrix
