@@ -128,7 +128,8 @@ hmm_fit <- lapply(setNames(colnames(het_cnt), colnames(het_cnt)), function(sampl
               quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
   
   ## model output
-  save(hmm1$model, file=file.path(outdir, paste0("hmmfit_", sample, ".rda")))
+  model <- hmm1$model
+  save(model, file=file.path(outdir, paste0("hmmfit_", sample, ".rda")))
   
   hmm1[['seg']] <- seg
   return(hmm1)
